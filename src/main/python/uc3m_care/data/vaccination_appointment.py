@@ -11,6 +11,22 @@ from uc3m_care.exception.vaccine_management_exception import VaccineManagementEx
 from uc3m_care.storage.appointments_json_store import AppointmentsJsonStore
 from uc3m_care.parser.appointment_json_parser import AppointmentJsonParser
 
+"""
+in python console
+from datetime import datetime
+
+datetime.fromisoformat("2022-05-04")
+>>datetime.datetime(2022, 5, 4, 0, 0)
+
+datetime.fromisoformat("2022-05-04").timestamp()
+>>1651615200.0
+
+datetime.fromtimestamp(1651615200.0).date().isoformat()
+>>'2022-05-04'
+"""
+
+
+
 #pylint: disable=too-many-instance-attributes
 class VaccinationAppointment():
     """Class representing an appointment  for the vaccination of a patient"""
@@ -112,8 +128,9 @@ class VaccinationAppointment():
         freezer.stop()
         return appointment
 
+    # MODIFY THIS - CALCULATE THE DIFFERENCE AS USE THAT VALUE AS THE NUM OF DAYS ASN USE RESULT AS THE PARAMETER OF THE METHOD
     @classmethod
-    def create_appointment_from_json_file( cls, json_file ):
+    def create_appointment_from_json_file( cls, json_file ): # def create_appointment_from_json_file( cls, json_file, date ):
         """returns the vaccination appointment for the received input json file"""
         appointment_parser = AppointmentJsonParser(json_file)
         new_appointment = cls(
