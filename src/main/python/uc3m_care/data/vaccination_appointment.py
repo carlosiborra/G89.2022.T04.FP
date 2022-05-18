@@ -23,6 +23,19 @@ datetime.fromisoformat("2022-05-04").timestamp()
 
 datetime.fromtimestamp(1651615200.0).date().isoformat()
 >>'2022-05-04'
+
+datetime.fromisoformat("2023-12-04").timestamp()
+1701644400.0
+datetime.fromisoformat("2023-12-04").date()
+datetime.date(2023, 12, 4)
+datetime.fromisoformat("2023-12-04").date().day
+4
+datetime.fromisoformat("2023-12-04").date().month
+12
+datetime.fromisoformat("2023-12-04").date().year
+2023
+
+
 """
 
 
@@ -130,7 +143,7 @@ class VaccinationAppointment():
 
     # MODIFY THIS - CALCULATE THE DIFFERENCE AS USE THAT VALUE AS THE NUM OF DAYS ASN USE RESULT AS THE PARAMETER OF THE METHOD
     @classmethod
-    def create_appointment_from_json_file( cls, json_file ): # def create_appointment_from_json_file( cls, json_file, date ):
+    def create_appointment_from_json_file(cls, json_file, date):
         """returns the vaccination appointment for the received input json file"""
         appointment_parser = AppointmentJsonParser(json_file)
         new_appointment = cls(

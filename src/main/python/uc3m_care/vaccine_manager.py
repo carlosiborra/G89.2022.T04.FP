@@ -1,7 +1,11 @@
 """Module """
 
+from datetime import datetime
+
+from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
 from uc3m_care.data.vaccine_patient_register import VaccinePatientRegister
 from uc3m_care.data.vaccination_appointment import VaccinationAppointment
+
 
 class VaccineManager:
     """Class for providing the methods for managing the vaccination process"""
@@ -28,10 +32,21 @@ class VaccineManager:
             my_patient.save_patient()
             return my_patient.patient_sys_id
 
-        def get_vaccine_date (self, input_file):
-            """Gets an appointment for a registered patient"""
-            my_sign= VaccinationAppointment.create_appointment_from_json_file(input_file)
-            #save the date in store_date.json
+        def get_vaccine_date (self, input_file, date):
+            """Gets an appointment for a registered patient: json file, date in ISO format"""
+            # Receives date in ISO format -> get date to then select days, months ...
+            vaccination_date = datetime.fromisoformat(date).date()
+
+            # Get the actual datetime
+            actual_time = datetime.now().date()
+
+            # If vaccination_date is equal or earlier than actual date, VaccineManagementException
+            if vaccination_date <= actual_time:
+                raise VaccineManagementException(
+                    "vaccination_date equal or earlier than current date")
+
+            my_sign = VaccinationAppointment.create_appointment_from_json_file(input_file)
+            # save the date in store_date.json
             my_sign.save_appointment()
             return my_sign.date_signature
 
@@ -42,13 +57,13 @@ class VaccineManager:
 
     instance = None
 
-    def __new__ ( cls ):
+    def __new__(cls):
         if not VaccineManager.instance:
             VaccineManager.instance = VaccineManager.__VaccineManager()
         return VaccineManager.instance
 
-    def __getattr__ ( self, nombre ):
+    def __getattr__(self, nombre):
         return getattr(self.instance, nombre)
 
-    def __setattr__ ( self, nombre, valor ):
+    def __setattr__(self, nombre, valor):
         return setattr(self.instance, nombre, valor)
