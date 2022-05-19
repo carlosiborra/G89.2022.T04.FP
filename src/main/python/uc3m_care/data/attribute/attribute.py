@@ -13,14 +13,15 @@ class Attribute():
         self._value = self._validate(attr_value)
 
     @property
-    def value( self ):
+    def value(self):
         """returns the attribute value"""
         return self._value
+
     @value.setter
-    def value( self, attr_value ):
+    def value(self, attr_value):
         self._value = self._validate(attr_value)
 
-    def _validate( self, attr_value ):
+    def _validate(self, attr_value):
         """validates the attr_value """
         registration_type_pattern = re.compile(self._validation_pattern)
         res = registration_type_pattern.fullmatch(attr_value)

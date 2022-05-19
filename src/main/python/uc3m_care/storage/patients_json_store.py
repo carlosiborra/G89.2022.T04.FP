@@ -12,7 +12,7 @@ class PatientsJsonStore():
         _FILE_PATH = JSON_FILES_PATH + "store_patient.json"
         _ID_FIELD = "_VaccinePatientRegister__patient_sys_id"
 
-        def add_item( self, item ):
+        def add_item(self, item):
             """Overrides the add_item to verify the item to be stored"""
             #pylint: disable=import-outside-toplevel, cyclic-import
             from uc3m_care.data.vaccine_patient_register import VaccinePatientRegister
@@ -35,13 +35,13 @@ class PatientsJsonStore():
 
     instance = None
 
-    def __new__ ( cls ):
+    def __new__(cls):
         if not PatientsJsonStore.instance:
             PatientsJsonStore.instance = PatientsJsonStore.__PatientsJsonStore()
         return PatientsJsonStore.instance
 
-    def __getattr__ ( self, nombre ):
+    def __getattr__(self, nombre):
         return getattr(self.instance, nombre)
 
-    def __setattr__ ( self, nombre, valor ):
+    def __setattr__(self, nombre, valor):
         return setattr(self.instance, nombre, valor)

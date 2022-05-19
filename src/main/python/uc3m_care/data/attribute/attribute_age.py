@@ -10,7 +10,7 @@ class Age(Attribute):
     def _validate( self, attr_value: str ) -> str:
         """Validates the age according to the requirements"""
         if attr_value.isnumeric():
-            if (int(attr_value) < 6 or int(attr_value) > 125):
+            if int(attr_value) < 6 or int(attr_value) > 125:
                 raise VaccineManagementException(self._validation_error_message)
         else:
             raise VaccineManagementException(self._validation_error_message)

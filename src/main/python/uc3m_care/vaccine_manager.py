@@ -1,8 +1,5 @@
 """Module """
 
-from datetime import datetime
-
-from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
 from uc3m_care.data.vaccine_patient_register import VaccinePatientRegister
 from uc3m_care.data.vaccination_appointment import VaccinationAppointment
 
@@ -34,17 +31,6 @@ class VaccineManager:
 
         def get_vaccine_date (self, input_file, date):
             """Gets an appointment for a registered patient: json file, date in ISO format"""
-            # Receives date in ISO format -> get date to then select days, months ...
-            vaccination_date = datetime.fromisoformat(date).date()
-
-            # Get the actual datetime
-            actual_time = datetime.now().date()
-
-            # If vaccination_date is equal or earlier than actual date, VaccineManagementException
-            if vaccination_date <= actual_time:
-                raise VaccineManagementException(
-                    "vaccination_date equal or earlier than current date")
-
             my_sign = VaccinationAppointment.create_appointment_from_json_file(input_file, date)
             # save the date in store_date.json
             my_sign.save_appointment()

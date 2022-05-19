@@ -17,7 +17,7 @@ from uc3m_care.storage.patients_json_store import PatientsJsonStore
 class VaccinePatientRegister:
     """Class representing the register of the patient in the system"""
     #pylint: disable=too-many-arguments
-    def __init__( self, patient_id, full_name, registration_type, phone_number, age ):
+    def __init__(self, patient_id, full_name, registration_type, phone_number, age):
         self.__patient_id = PatientId(patient_id).value
         self.__full_name = FullName(full_name).value
         self.__registration_type = RegistrationType(registration_type).value
@@ -26,10 +26,10 @@ class VaccinePatientRegister:
         justnow = datetime.utcnow()
         self.__time_stamp = datetime.timestamp(justnow)
         #self.__time_stamp = 1645542405.232003
-        self.__patient_sys_id =  hashlib.md5(self.__str__().encode()).hexdigest()
+        self.__patient_sys_id = hashlib.md5(self.__str__().encode()).hexdigest()
 
     @classmethod
-    def create_patient_from_patient_system_id( cls, patient_system_id ):
+    def create_patient_from_patient_system_id(cls, patient_system_id):
         """returns the VaccinePatientRegister object for the patient_system_id received"""
         patient_store = PatientsJsonStore()
 
@@ -70,6 +70,7 @@ class VaccinePatientRegister:
     def vaccine_type( self ):
         """Property representing the type vaccine"""
         return self.__registration_type
+
     @vaccine_type.setter
     def vaccine_type( self, value ):
         self.__registration_type = RegistrationType(value).value
@@ -78,6 +79,7 @@ class VaccinePatientRegister:
     def phone_number( self ):
         """Property representing the requester's phone number"""
         return self.__phone_number
+
     @phone_number.setter
     def phone_number( self, value ):
         self.__phone_number = PhoneNumber(value).value

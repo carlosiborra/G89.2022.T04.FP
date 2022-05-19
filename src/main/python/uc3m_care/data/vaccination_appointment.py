@@ -11,7 +11,8 @@ from uc3m_care.exception.vaccine_management_exception import VaccineManagementEx
 from uc3m_care.storage.appointments_json_store import AppointmentsJsonStore
 from uc3m_care.parser.appointment_json_parser import AppointmentJsonParser
 
-#pylint: disable=too-many-instance-attributes
+
+# pylint: disable=too-many-instance-attributes
 
 # LO MISMO HAY QUE ARREGLAR ESTO TMBN
 class VaccinationAppointment():
@@ -30,15 +31,14 @@ class VaccinationAppointment():
         if days == 0:
             self.__appointment_date = 0
         else:
-            #timestamp is represneted in seconds.microseconds
-            #age must be expressed in senconds to be added to the timestap
+            # timestamp is represneted in seconds.microseconds
+            # age must be expressed in senconds to be added to the timestap
             self.__appointment_date = self.__issued_at + (days * 24 * 60 * 60)
-            print(self.__appointment_date)
         self.__date_signature = self.vaccination_signature
 
     def __signature_string(self):
         """Composes the string to be used for generating the key for the date"""
-        return "{alg:" + self.__alg +",typ:" + self.__type +",patient_sys_id:" + \
+        return "{alg:" + self.__alg + ",typ:" + self.__type + ",patient_sys_id:" + \
                self.__patient_sys_id + ",issuedate:" + self.__issued_at.__str__() + \
                ",vaccinationtiondate:" + self.__appointment_date.__str__() + "}"
 
@@ -66,7 +66,7 @@ class VaccinationAppointment():
         return self.__phone_number
 
     @phone_number.setter
-    def phone_number( self, value ):
+    def phone_number(self, value):
         self.__phone_number = PhoneNumber(value).value
 
     @property
@@ -111,14 +111,13 @@ class VaccinationAppointment():
         freezer.start()
 
         # We get the issued at date timestamp from the created appointment_record
-        actual_time = appointment_record["_VaccinationAppointment__issued_at"]
+        current_date = appointment_record["_VaccinationAppointment__issued_at"]
 
         # We get the vaccination date timestamp from the created appointment_record
         vaccination_date = appointment_record["_VaccinationAppointment__appointment_date"]
 
         # Get the |days left - the timestamp| / number of days rounded
-        days_left = round(abs(vaccination_date - actual_time) / (24 * 60 * 60))
-        print(days_left)
+        days_left = round(abs(vaccination_date - current_date) / (24 * 60 * 60))
 
         appointment = cls(appointment_record["_VaccinationAppointment__patient_sys_id"],
                           appointment_record["_VaccinationAppointment__phone_number"],
@@ -129,14 +128,28 @@ class VaccinationAppointment():
     @classmethod
     def create_appointment_from_json_file(cls, json_file, date):
         """returns the vaccination appointment for the received input json file"""
+        # Check if date is in the correct iso format
+        # The easiest way is to do this is by checking ISO format, which takes into account everything
+        try:
+            datetime.fromisoformat(date).date()
+        except Exception:
+            raise VaccineManagementException(
+                "Wrong vaccination_date format")
+
         # Same as in get_vaccine_date, get date and actual_time
         vaccination_date = datetime.fromisoformat(date).timestamp()
 
         # Get the actual timestamp (for operation reasons) - frozen
-        actual_time = datetime.now().timestamp()
+        current_date = datetime.now().timestamp()
+
+        # If vaccination_date is equal or earlier than actual date, VaccineManagementException
+        if datetime.fromtimestamp(vaccination_date).date() \
+                <= datetime.fromtimestamp(current_date).date():
+            raise VaccineManagementException(
+                "vaccination_date equal or earlier than current_date")
 
         # Get the |days left - the timestamp| / number of days rounded
-        days_left = round(abs(vaccination_date - actual_time)/(24*60*60))
+        days_left = round(abs(vaccination_date - current_date) / (24 * 60 * 60))
 
         # Instead of 10 days, the difference of the appointment days
         appointment_parser = AppointmentJsonParser(json_file)
