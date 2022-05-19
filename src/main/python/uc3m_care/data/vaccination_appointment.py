@@ -11,34 +11,6 @@ from uc3m_care.exception.vaccine_management_exception import VaccineManagementEx
 from uc3m_care.storage.appointments_json_store import AppointmentsJsonStore
 from uc3m_care.parser.appointment_json_parser import AppointmentJsonParser
 
-"""
-in python console
-from datetime import datetime
-
-datetime.fromisoformat("2022-05-04")
->>datetime.datetime(2022, 5, 4, 0, 0)
-
-datetime.fromisoformat("2022-05-04").timestamp()
->>1651615200.0
-
-datetime.fromtimestamp(1651615200.0).date().isoformat()
->>'2022-05-04'
-
-datetime.fromisoformat("2023-12-04").timestamp()
-1701644400.0
-datetime.fromisoformat("2023-12-04").date()
-datetime.date(2023, 12, 4)
-datetime.fromisoformat("2023-12-04").date().day
-4
-datetime.fromisoformat("2023-12-04").date().month
-12
-datetime.fromisoformat("2023-12-04").date().year
-2023
-
-
-"""
-
-
 #pylint: disable=too-many-instance-attributes
 
 # LO MISMO HAY QUE ARREGLAR ESTO TMBN
@@ -61,6 +33,7 @@ class VaccinationAppointment():
             #timestamp is represneted in seconds.microseconds
             #age must be expressed in senconds to be added to the timestap
             self.__appointment_date = self.__issued_at + (days * 24 * 60 * 60)
+            print(self.__appointment_date)
         self.__date_signature = self.vaccination_signature
 
     def __signature_string(self):
@@ -130,28 +103,40 @@ class VaccinationAppointment():
         """returns the vaccination appointment object for the date_signature received"""
         appointments_store = AppointmentsJsonStore()
         appointment_record = appointments_store.find_item(DateSignature(date_signature).value)
+
         if appointment_record is None:
             raise VaccineManagementException("date_signature is not found")
         freezer = freeze_time(
             datetime.fromtimestamp(appointment_record["_VaccinationAppointment__issued_at"]))
         freezer.start()
+
+        # We get the issued at date timestamp from the created appointment_record
+        actual_time = appointment_record["_VaccinationAppointment__issued_at"]
+
+        # We get the vaccination date timestamp from the created appointment_record
+        vaccination_date = appointment_record["_VaccinationAppointment__appointment_date"]
+
+        # Get the |days left - the timestamp| / number of days rounded
+        days_left = round(abs(vaccination_date - actual_time) / (24 * 60 * 60))
+        print(days_left)
+
         appointment = cls(appointment_record["_VaccinationAppointment__patient_sys_id"],
                           appointment_record["_VaccinationAppointment__phone_number"],
-                          10)
+                          days_left)
         freezer.stop()
         return appointment
 
-    # MODIFY THIS - CALCULATE THE DIFFERENCE AS USE THAT VALUE AS THE NUM OF DAYS ASN USE RESULT AS THE PARAMETER OF THE METHOD
     @classmethod
     def create_appointment_from_json_file(cls, json_file, date):
         """returns the vaccination appointment for the received input json file"""
         # Same as in get_vaccine_date, get date and actual_time
-        # Receives date in ISO format -> get date to then select days, months ...
         vaccination_date = datetime.fromisoformat(date).timestamp()
-        # Get the actual timestamp (for operation reasons)
+
+        # Get the actual timestamp (for operation reasons) - frozen
         actual_time = datetime.now().timestamp()
-        # Get days left - the timestamp / number of days rounded
-        days_left = round((vaccination_date - actual_time)/(24*60*60))
+
+        # Get the |days left - the timestamp| / number of days rounded
+        days_left = round(abs(vaccination_date - actual_time)/(24*60*60))
 
         # Instead of 10 days, the difference of the appointment days
         appointment_parser = AppointmentJsonParser(json_file)
@@ -169,7 +154,7 @@ class VaccinationAppointment():
             raise VaccineManagementException("Today is not the date")
         return True
 
-    def register_vaccination( self ):
+    def register_vaccination(self):
         """register the vaccine administration"""
         if self.is_valid_today():
             vaccination_log_entry = VaccinationLog(self.date_signature)

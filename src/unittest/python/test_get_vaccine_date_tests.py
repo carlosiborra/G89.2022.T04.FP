@@ -2,6 +2,7 @@
 from unittest import TestCase
 import os
 import shutil
+from datetime import datetime
 from freezegun import freeze_time
 from uc3m_care import VaccineManager
 from uc3m_care import VaccineManagementException
@@ -39,31 +40,35 @@ param_list_nok = [("test_dup_all.json","JSON Decode Error - Wrong JSON Format"),
                     ("test_no_char_plus.json", "phone number is not valid"),
                     ("test_no_colon.json", "JSON Decode Error - Wrong JSON Format"),
                     ("test_no_comillas.json","JSON Decode Error - Wrong JSON Format"),
-                    ("test_no_phone.json", "phone number is not valid")
-                    ]
+                    ("test_no_phone.json", "phone number is not valid")]
 
 class TestGetVaccineDate(TestCase):
     """Class for testing get_vaccine_date"""
+
     @freeze_time("2022-03-08")
     def test_get_vaccine_date_ok(self):
         """test ok"""
         file_test = JSON_FILES_RF2_PATH + "test_ok.json"
         my_manager = VaccineManager()
 
-    #first , prepare my test , remove store patient
+        #first , prepare my test , remove store patient
         file_store = PatientsJsonStore()
         file_store.delete_json_file()
         file_store_date = AppointmentsJsonStore()
         file_store_date.delete_json_file()
 
-    # add a patient in the store
+        # add a patient in the store
         my_manager.request_vaccination_id("78924cb0-075a-4099-a3ee-f3b562e805b9",
                                           "minombre tienelalongitudmaxima",
-                                          "Regular","+34123456789","6")
-    #check the method
-        value = my_manager.get_vaccine_date(file_test)
-        self.assertEqual(value, "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
-    #check store_date
+                                          "Regular", "+34123456789", "6")
+
+        # Fixed Date in ISO format for testing purposes
+        date = "2022-03-18"
+
+        #check the method
+        value = my_manager.get_vaccine_date(file_test, date)
+        self.assertEqual(value, "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c") # SE HA TENIDO QUE CAMBIAR
+        #check store_date
         self.assertIsNotNone(file_store_date.find_item(value))
 
     @freeze_time("2022-03-08")
@@ -79,14 +84,18 @@ class TestGetVaccineDate(TestCase):
         my_manager.request_vaccination_id("78924cb0-075a-4099-a3ee-f3b562e805b9",
                                           "minombre tienelalongitudmaxima",
                                           "Regular", "+34123456789", "6")
-        for file_name,expected_value in param_list_nok:
+
+        # Fixed Date in ISO format for testing purposes
+        date = "2022-03-18"
+
+        for file_name, expected_value in param_list_nok:
             with self.subTest(test=file_name):
                 file_test = JSON_FILES_RF2_PATH + file_name
                 hash_original = file_store_date.data_hash()
 
                 # check the method
                 with self.assertRaises(VaccineManagementException) as c_m:
-                    my_manager.get_vaccine_date(file_test)
+                    my_manager.get_vaccine_date(file_test, date)
                 self.assertEqual(c_m.exception.message, expected_value)
 
                 # read the file again to compare
@@ -102,15 +111,18 @@ class TestGetVaccineDate(TestCase):
         my_manager = VaccineManager()
         file_store_date = AppointmentsJsonStore()
 
+        # Fixed Date in ISO format for testing purposes
+        date = "2022-03-18"
+
         # read the file to compare file content before and after method call
         hash_original = file_store_date.data_hash()
 
-        #check the method
+        # Check the method
         with self.assertRaises(VaccineManagementException) as c_m:
-            my_manager.get_vaccine_date(file_test)
+            my_manager.get_vaccine_date(file_test, date)
         self.assertEqual(c_m.exception.message, "patient system id is not valid")
 
-        # read the file again to campare
+        # Read the file again to compare
         hash_new = file_store_date.data_hash()
 
         self.assertEqual(hash_new, hash_original)
@@ -122,15 +134,18 @@ class TestGetVaccineDate(TestCase):
         my_manager = VaccineManager()
         file_store_date = AppointmentsJsonStore()
 
+        # Fixed Date in ISO format for testing purposes
+        date = "2022-03-18"
+
         # read the file to compare file content before and after method call
         hash_original = file_store_date.data_hash()
 
-    #check the method
+        #check the method
         with self.assertRaises(VaccineManagementException) as c_m:
-            my_manager.get_vaccine_date(file_test)
+            my_manager.get_vaccine_date(file_test, date)
         self.assertEqual(c_m.exception.message, "JSON Decode Error - Wrong JSON Format")
 
-    #read the file again to campare
+        #read the file again to campare
         hash_new = file_store_date.data_hash()
 
         self.assertEqual(hash_new, hash_original)
@@ -150,12 +165,15 @@ class TestGetVaccineDate(TestCase):
             shutil.copy(JSON_FILES_RF2_PATH + "store_patient_manipulated.json",
                         JSON_FILES_PATH + "store_patient_manipulated.json")
 
-        #rename the manipulated patient's store
+        # Fixed Date in ISO format for testing purposes
+        date = "2022-03-18"
+
+        # Rename the manipulated patient's store
         if os.path.isfile(file_store):
             print(file_store)
             print(JSON_FILES_PATH + "swap.json")
             os.rename(file_store, JSON_FILES_PATH + "swap.json")
-        os.rename(JSON_FILES_PATH + "store_patient_manipulated.json",file_store)
+        os.rename(JSON_FILES_PATH + "store_patient_manipulated.json", file_store)
 
         file_store_date = AppointmentsJsonStore()
         # read the file to compare file content before and after method call
@@ -165,19 +183,19 @@ class TestGetVaccineDate(TestCase):
 
         exception_message = "Exception not raised"
         try:
-            my_manager.get_vaccine_date(file_test)
-        #pylint: disable=broad-except
+            my_manager.get_vaccine_date(file_test, date)
+        # pylint: disable=broad-except
         except Exception as exception_raised:
             exception_message = exception_raised.__str__()
 
-        #restore the original patient's store
+        # Restore the original patient's store
         os.rename(file_store, JSON_FILES_PATH + "store_patient_manipulated.json")
         if os.path.isfile(JSON_FILES_PATH + "swap.json"):
             print(JSON_FILES_PATH + "swap.json")
             print(file_store)
             os.rename(JSON_FILES_PATH + "swap.json", file_store)
 
-        # read the file again to campare
+        # Read the file again to compare
         hash_new = file_store_date.data_hash()
 
         self.assertEqual(exception_message, "Patient's data have been manipulated")
