@@ -14,7 +14,7 @@ class AppointmentsJsonStore():
         _ID_FIELD = "_VaccinationAppointment__date_signature"
         ERROR_INVALID_APPOINTMENT_OBJECT = "Invalide appointment object"
 
-        def add_item( self, item ):
+        def add_item(self, item):
             """Overrides the add_item method to verify the item to be stored"""
             #pylint: disable=import-outside-toplevel, cyclic-import
             from uc3m_care.data.vaccination_appointment import VaccinationAppointment
@@ -24,13 +24,13 @@ class AppointmentsJsonStore():
 
     instance = None
 
-    def __new__ ( cls ):
+    def __new__(cls):
         if not AppointmentsJsonStore.instance:
             AppointmentsJsonStore.instance = AppointmentsJsonStore.__AppointmentsJsonStore()
         return AppointmentsJsonStore.instance
 
-    def __getattr__ ( self, nombre ):
+    def __getattr__(self, nombre):
         return getattr(self.instance, nombre)
 
-    def __setattr__ ( self, nombre, valor ):
+    def __setattr__(self, nombre, valor):
         return setattr(self.instance, nombre, valor)

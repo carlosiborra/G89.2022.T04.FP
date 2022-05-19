@@ -45,7 +45,7 @@ class VaccineManager:
                 raise VaccineManagementException(
                     "vaccination_date equal or earlier than current date")
 
-            my_sign = VaccinationAppointment.create_appointment_from_json_file(input_file)
+            my_sign = VaccinationAppointment.create_appointment_from_json_file(input_file, date)
             # save the date in store_date.json
             my_sign.save_appointment()
             return my_sign.date_signature
