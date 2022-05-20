@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="test_cancel_appointment_tests.TestCancelAppointment-20220520142134" tests="2" file="test_cancel_appointment_tests.py" time="0.079" timestamp="2022-05-20T14:21:34" failures="0" errors="0" skipped="0">
+	<testcase classname="test_cancel_appointment_tests.TestCancelAppointment" name="test_non_valid_cancellation_temporal" time="0.050" timestamp="2022-05-20T14:21:34"/>
+	<testcase classname="test_cancel_appointment_tests.TestCancelAppointment" name="test_valid_cancellation_temporal" time="0.029" timestamp="2022-05-20T14:21:34"/>
+</testsuite>
