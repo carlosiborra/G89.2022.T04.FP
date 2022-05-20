@@ -132,9 +132,9 @@ class VaccinationAppointment():
         # The easiest way is to do this is by checking ISO format, which takes into account everything
         try:
             datetime.fromisoformat(date).date()
-        except Exception:
+        except Exception as ex:
             raise VaccineManagementException(
-                "Wrong vaccination_date format")
+                "Wrong vaccination_date format") from ex
 
         # Same as in get_vaccine_date, get date and actual_time
         vaccination_date = datetime.fromisoformat(date).timestamp()
