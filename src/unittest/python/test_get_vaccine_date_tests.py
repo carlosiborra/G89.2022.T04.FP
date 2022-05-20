@@ -9,7 +9,8 @@ from uc3m_care import JSON_FILES_PATH, JSON_FILES_RF2_PATH
 from uc3m_care import AppointmentsJsonStore
 from uc3m_care import PatientsJsonStore
 
-param_list_nok = [("test_dup_all.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
+param_list_nok = [
+    ("test_dup_all.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
                   ("test_dup_char_plus.json", "2022-03-18", "phone number is not valid"),
                   ("test_dup_colon.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
                   ("test_dup_comillas.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),

@@ -17,7 +17,6 @@ from uc3m_care.parser.appointment_json_parser import AppointmentJsonParser
 
 # pylint: disable=too-many-instance-attributes
 
-# LO MISMO HAY QUE ARREGLAR ESTO TMBN
 class VaccinationAppointment():
     """Class representing an appointment  for the vaccination of a patient"""
 
@@ -190,34 +189,44 @@ class VaccinationAppointment():
 
         # Check if cancelation_type exists in input file
         try:
-            file["cancelation_type"]
+            cancellation_type = file["cancelation_type"]
         except Exception as ex:
             raise VaccineManagementException("No cancelation_type in input_file") from ex
 
         # Check if reason exists in input file
         try:
-            file["reason"]
+            reason = file["reason"]
         except Exception as ex:
             raise VaccineManagementException("No reason in input_file") from ex
 
         # We check that date_signature type is sha256 - 64 bytes hexadecimal
         # ESTO DEBERIA IR DONDE LOS ATTRIBUTES, ES UN REGEX
-        sha256_regex = r"^[a-fA-F0-9]{64}$"
-        res = re.fullmatch(sha256_regex, date_signature)
-        if not res:
-            raise VaccineManagementException("Wrong date_signature")
+        try:
+            sha256_regex = r"^[a-fA-F0-9]{64}$"
+            res = re.fullmatch(sha256_regex, date_signature)
+            if not res:
+                raise VaccineManagementException("Invalid date_signature")
+        except TypeError as ex:
+            raise VaccineManagementException("Invalid date_signature: not a string") from ex
 
         # We check that cancellation type is either Temporal or final
-        if file["cancelation_type"] not in ["Temporal", "Final"]:
-            raise VaccineManagementException("Wrong cancelation_type value")
+        try:
+            cancellation_type_regex = r"Final|Temporal"
+            res = re.fullmatch(cancellation_type_regex, cancellation_type)
+            if not res:
+                raise VaccineManagementException("Invalid cancelation_type")
+        except TypeError as ex:
+            raise VaccineManagementException("Invalid cancelation_type: not a string") from ex
 
         # We check that reason string has between 2 and 100 characters
         # We also check that it is a string
         try:
-            if len(file["reason"]) < 2 or len(file["reason"]) > 100:
-                raise VaccineManagementException("Wrong reason length")
+            reason_regex = r"^[\d\w\s]{2,100}$"
+            res = re.fullmatch(reason_regex, reason)
+            if not res:
+                raise VaccineManagementException("Invalid reason")
         except TypeError as ex:
-            raise VaccineManagementException("Wrong reason type") from ex
+            raise VaccineManagementException("Invalid reason: not a string") from ex
 
         """00000000000000000000000000000000000000000000000000000000000000000000000000000000000"""
         # APPOINTMENT

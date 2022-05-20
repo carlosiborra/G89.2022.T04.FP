@@ -1,11 +1,7 @@
 """Module """
-import json
-import re
-from datetime import datetime
-from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
+
 from uc3m_care.data.vaccine_patient_register import VaccinePatientRegister
 from uc3m_care.data.vaccination_appointment import VaccinationAppointment
-from uc3m_care import JSON_FILES_PATH
 
 
 class VaccineManager:
@@ -44,8 +40,6 @@ class VaccineManager:
             """Register the vaccination of the patient"""
             appointment = VaccinationAppointment.get_appointment_from_date_signature(date_signature)
             return appointment.register_vaccination()
-
-        # HABRA QUE CAMBIARLO DE LADO!!! - DEMASIADA COSA, REFACTOR
 
         def cancel_appointment(self, input_file):
             """Deletes an appointment from json file"""
