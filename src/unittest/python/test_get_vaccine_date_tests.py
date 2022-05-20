@@ -74,7 +74,7 @@ class TestGetVaccineDate(TestCase):
         # check the method
         value = my_manager.get_vaccine_date(file_test, date)
         self.assertEqual(value,
-                         "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")  # SE HA TENIDO QUE CAMBIAR
+                         "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
         # check store_date
         self.assertIsNotNone(file_store_date.find_item(value))
 

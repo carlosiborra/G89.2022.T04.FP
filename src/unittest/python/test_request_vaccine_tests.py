@@ -104,7 +104,7 @@ class TestRequestVacID(unittest.TestCase):
     # pylint: disable=too-many-locals
     @freeze_time("2022-03-08")
     def test_parametrized_valid_request_vaccination(self):
-        "Parametrized tests: valid cases"
+        """Parametrized tests: valid cases"""
         file_store = PatientsJsonStore()
         file_store.delete_json_file()
 
