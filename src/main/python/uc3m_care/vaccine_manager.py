@@ -5,7 +5,7 @@ from datetime import datetime
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
 from uc3m_care.data.vaccine_patient_register import VaccinePatientRegister
 from uc3m_care.data.vaccination_appointment import VaccinationAppointment
-from uc3m_care import JSON_FILES_PATH, JSON_FILES_CANCELLATION
+from uc3m_care import JSON_FILES_PATH
 
 
 class VaccineManager:
@@ -68,6 +68,7 @@ class VaccineManager:
             # Check if date_signature exists in input file and save its value
             try:
                 date_signature = file["date_signature"]
+                print(date_signature)
             except Exception as ex:
                 raise VaccineManagementException("No date_signature in input_file") from ex
 
