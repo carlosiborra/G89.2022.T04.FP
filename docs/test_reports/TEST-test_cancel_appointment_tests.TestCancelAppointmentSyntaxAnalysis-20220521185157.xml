@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="test_cancel_appointment_tests.TestCancelAppointmentSyntaxAnalysis-20220521185157" tests="2" file="test_cancel_appointment_tests.py" time="1.037" timestamp="2022-05-21T18:51:59" failures="0" errors="0" skipped="0">
-	<testcase classname="test_cancel_appointment_tests.TestCancelAppointmentSyntaxAnalysis" name="test_parametrized_not_valid_sa_cancellation_appointment" time="0.928" timestamp="2022-05-21T18:51:59"/>
-	<testcase classname="test_cancel_appointment_tests.TestCancelAppointmentSyntaxAnalysis" name="test_parametrized_valid_sa_cancellation_appointment" time="0.109" timestamp="2022-05-21T18:51:59"/>
-</testsuite>

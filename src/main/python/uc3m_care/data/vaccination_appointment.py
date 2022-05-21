@@ -14,9 +14,7 @@ from uc3m_care.storage.appointments_json_store import AppointmentsJsonStore
 from uc3m_care.parser.appointment_json_parser import AppointmentJsonParser
 
 
-
 # pylint: disable=too-many-instance-attributes
-
 
 
 class VaccinationAppointment():
@@ -63,7 +61,6 @@ class VaccinationAppointment():
             # age must be expressed in senconds to be added to the timestap
             self.__appointment_date = self.__issued_at + (days * 24 * 60 * 60)
         self.__date_signature = self.vaccination_signature
-
 
     def __signature_string(self):
         """Composes the string to be used for generating the key for the date"""
@@ -132,7 +129,6 @@ class VaccinationAppointment():
         """returns the vaccination appointment object for the date_signature received"""
         appointments_store = AppointmentsJsonStore()
         appointment_record = appointments_store.find_item(DateSignature(date_signature).value)
-
 
         if appointment_record is None:
             raise VaccineManagementException(VaccinationAppointment.SIGNATURE_NOT_FOUND)
