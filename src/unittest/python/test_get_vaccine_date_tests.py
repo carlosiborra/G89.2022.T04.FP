@@ -49,6 +49,10 @@ param_list_nok = [
     ("test_ok.json", "2022-02-18", "vaccination_date equal or earlier than current_date"),
     ("test_ok.json", "2022-13-01", "Wrong vaccination_date format"),
     ("test_ok.json", "2022-00-04", "Wrong vaccination_date format"),
+    ("test_ok.json", "2022-03-32", "Wrong vaccination_date format"),
+    ("test_ok.json", "2022-04-31", "Wrong vaccination_date format"),
+    ("test_ok.json", "2022-02-29", "Wrong vaccination_date format"),
+    ("test_ok.json", "2024-02-30", "Wrong vaccination_date format"),
     ("test_ok.json", "2022-04-00", "Wrong vaccination_date format"),
     ("test_ok.json", "04-2022-04", "Wrong vaccination_date format"),
     ("test_ok.json", "04-04-2022", "Wrong vaccination_date format"),
@@ -92,6 +96,60 @@ class TestGetVaccineDate(TestCase):
         value = my_manager.get_vaccine_date(file_test, date)
         self.assertEqual(value,
                          "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
+        # check store_date
+        self.assertIsNotNone(file_store_date.find_item(value))
+
+    @freeze_time("2022-03-08")
+    def test_get_vaccine_date_ok_bv_1(self):
+        """test ok"""
+        file_test = JSON_FILES_RF2_PATH + "test_ok.json"
+        my_manager = VaccineManager()
+
+        # first , prepare my test , remove store patient
+        file_store = PatientsJsonStore()
+        file_store.delete_json_file()
+        file_store_date = AppointmentsJsonStore()
+        file_store_date.delete_json_file()
+
+        # add a patient in the store
+        my_manager.request_vaccination_id("78924cb0-075a-4099-a3ee-f3b562e805b9",
+                                          "minombre tienelalongitudmaxima",
+                                          "Regular", "+34123456789", "6")
+
+        # Fixed Date in ISO format for testing purposes
+        date = "2022-12-18"
+
+        # check the method
+        value = my_manager.get_vaccine_date(file_test, date)
+        self.assertEqual(value,
+                         "8f1ec866e9017e15921649419fd7ddbd1927fcb170906738e1dc3125e2d599ec")
+        # check store_date
+        self.assertIsNotNone(file_store_date.find_item(value))
+
+    @freeze_time("2022-03-08")
+    def test_get_vaccine_date_ok_bv_2(self):
+        """test ok"""
+        file_test = JSON_FILES_RF2_PATH + "test_ok.json"
+        my_manager = VaccineManager()
+
+        # first , prepare my test , remove store patient
+        file_store = PatientsJsonStore()
+        file_store.delete_json_file()
+        file_store_date = AppointmentsJsonStore()
+        file_store_date.delete_json_file()
+
+        # add a patient in the store
+        my_manager.request_vaccination_id("78924cb0-075a-4099-a3ee-f3b562e805b9",
+                                          "minombre tienelalongitudmaxima",
+                                          "Regular", "+34123456789", "6")
+
+        # Fixed Date in ISO format for testing purposes
+        date = "2023-01-18"
+
+        # check the method
+        value = my_manager.get_vaccine_date(file_test, date)
+        self.assertEqual(value,
+                         "1b0887bf18529ee1f12447d49841dc9229cddcc9b10bf54f37566fdd74ecf11d")
         # check store_date
         self.assertIsNotNone(file_store_date.find_item(value))
 
