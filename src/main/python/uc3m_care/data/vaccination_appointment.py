@@ -48,6 +48,21 @@ class VaccinationAppointment():
     NO_CANCELATION_TYPE = "No cancelation_type in input_file"
     NO_DATE_SIGNATURE = "No date_signature in input_file"
     WRONG_N_ELEM = "Wrong number of elements in input_file"
+    REASON_NOT_A_STRING = "Invalid reason: not a string"
+    INVALID_REASON = "Invalid reason"
+    CANCELATION_TYPE_NOT_A_STRING = "Invalid cancelation_type: not a string"
+    INVALID_CANCELATION_TYPE = "Invalid cancelation_type"
+    INVALID_DATE_SIGNATURE = "Invalid date_signature"
+    DATE_SIGNATURE_NOT_A_STRING = "Invalid date_signature: not a string"
+    APPOINTMENT_CANCELLED = "Appointment has already been canceled"
+    CANCELATION_FILE_DOES_NOT_EXIST = "The cancellation_file does not exist"
+    VACCINE_ADMINISTERED = "Vaccine has already been administered"
+    VACCINATION_STORE_DOES_NOT_EXIST = "The vaccination_store does not exist"
+    APPOINTMENT_PASSED = "The appointment date received has already passed"
+    APPOINTMENT_DOES_NOT_EXIST = "The appointment received does not exist"
+    APPOINTMENT_FILE_DOES_NOT_EXIST = "The appointment_file received does not exist"
+    NOT_THE_DATE = "Today is not the date"
+    ERROR_CANCELING_APPOINTMENT = "Error when cancelling the appointment"
 
     def __signature_string(self):
         """Composes the string to be used for generating the key for the date"""
@@ -220,18 +235,18 @@ class VaccinationAppointment():
             sha256_regex = r"^[a-fA-F0-9]{64}$"
             res = re.fullmatch(sha256_regex, date_signature)
             if not res:
-                raise VaccineManagementException("Invalid date_signature")
+                raise VaccineManagementException(VaccinationAppointment.INVALID_DATE_SIGNATURE)
         except TypeError as ex:
-            raise VaccineManagementException("Invalid date_signature: not a string") from ex
+            raise VaccineManagementException(VaccinationAppointment.DATE_SIGNATURE_NOT_A_STRING) from ex
 
         # We check that cancellation type is either Temporal or final
         try:
             cancellation_type_regex = r"Final|Temporal"
             res = re.fullmatch(cancellation_type_regex, cancellation_type)
             if not res:
-                raise VaccineManagementException("Invalid cancelation_type")
+                raise VaccineManagementException(VaccinationAppointment.INVALID_CANCELATION_TYPE)
         except TypeError as ex:
-            raise VaccineManagementException("Invalid cancelation_type: not a string") from ex
+            raise VaccineManagementException(VaccinationAppointment.CANCELATION_TYPE_NOT_A_STRING) from ex
 
         # We check that reason string has between 2 and 100 characters
         # We also check that it is a string
@@ -239,9 +254,9 @@ class VaccinationAppointment():
             reason_regex = r"^[\d\w\s]{2,100}$"
             res = re.fullmatch(reason_regex, reason)
             if not res:
-                raise VaccineManagementException("Invalid reason")
+                raise VaccineManagementException(VaccinationAppointment.INVALID_REASON)
         except TypeError as ex:
-            raise VaccineManagementException("Invalid reason: not a string") from ex
+            raise VaccineManagementException(VaccinationAppointment.REASON_NOT_A_STRING) from ex
 
         """00000000000000000000000000000000000000000000000000000000000000000000000000000000000"""
         # APPOINTMENT
@@ -250,7 +265,7 @@ class VaccinationAppointment():
             with open(appointment_file, "r", encoding="utf-8", newline="") as appoint_file:
                 appoint_file = json.load(appoint_file)
         except FileNotFoundError as ex:
-            raise VaccineManagementException("The appointment_file received does not exist") from ex
+            raise VaccineManagementException(VaccinationAppointment.APPOINTMENT_FILE_DOES_NOT_EXIST) from ex
         except json.JSONDecodeError as ex:
             raise VaccineManagementException(VaccinationAppointment.JEDWJF) from ex
 
@@ -266,7 +281,7 @@ class VaccinationAppointment():
 
         # If we did not encounter the date_signature - exception
         if appointment_found is False:
-            raise VaccineManagementException("The appointment received does not exist")
+            raise VaccineManagementException(VaccinationAppointment.APPOINTMENT_DOES_NOT_EXIST)
 
         # Get the actual timestamp (for operation reasons) - frozen specified by each test
         current_date = datetime.now().timestamp()
@@ -277,7 +292,7 @@ class VaccinationAppointment():
         if datetime.fromtimestamp(
                 appoint_file[appointment_index]["_VaccinationAppointment__appointment_date"]) \
                 .date() < datetime.fromtimestamp(current_date).date():
-            raise VaccineManagementException("The appointment date received has already passed")
+            raise VaccineManagementException(VaccinationAppointment.APPOINTMENT_PASSED)
 
         """00000000000000000000000000000000000000000000000000000000000000000000000000000000000"""
         # Vaccination log
@@ -286,14 +301,14 @@ class VaccinationAppointment():
             with open(vaccination_file, "r", encoding="utf-8", newline="") as vaccine_file:
                 vaccine_file = json.load(vaccine_file)
         except FileNotFoundError as ex:
-            raise VaccineManagementException("The vaccination_store does not exist") from ex
+            raise VaccineManagementException(VaccinationAppointment.VACCINATION_STORE_DOES_NOT_EXIST) from ex
         except json.JSONDecodeError as ex:
             raise VaccineManagementException(VaccinationAppointment.JEDWJF) from ex
 
         # We search for a vaccination with the given date_signature
         for i in range(len(vaccine_file)):
             if vaccine_file[i]["_VaccinationLog__date_signature"] == date_signature:
-                raise VaccineManagementException("Vaccine has already been administered")
+                raise VaccineManagementException(VaccinationAppointment.VACCINE_ADMINISTERED)
             continue
 
         """00000000000000000000000000000000000000000000000000000000000000000000000000000000000"""
@@ -303,14 +318,14 @@ class VaccinationAppointment():
             with open(cancellation_file, "r", encoding="utf-8", newline="") as cancel_file:
                 cancel_file = json.load(cancel_file)
         except FileNotFoundError as ex:
-            raise VaccineManagementException("The cancellation_file does not exist") from ex
+            raise VaccineManagementException(VaccinationAppointment.CANCELATION_FILE_DOES_NOT_EXIST) from ex
         except json.JSONDecodeError as ex:
             raise VaccineManagementException(VaccinationAppointment.JEDWJF) from ex
 
         # We search for a cancellation with the given date_signature
         for i in range(len(cancel_file)):
             if cancel_file[i]["date_signature"] == date_signature:
-                raise VaccineManagementException("Appointment has already been canceled")
+                raise VaccineManagementException(VaccinationAppointment.APPOINTMENT_CANCELLED)
             continue
 
         """00000000000000000000000000000000000000000000000000000000000000000000000000000000000"""
@@ -330,7 +345,7 @@ class VaccinationAppointment():
                 # back to json
                 json.dump(destination, cancel_file, indent=2)
         except Exception as ex:
-            raise VaccineManagementException("Error when cancelling the appointment") from ex
+            raise VaccineManagementException(VaccinationAppointment.ERROR_CANCELING_APPOINTMENT) from ex
 
         # After all the checks and creation of the cancellation, return date_signature
         return date_signature
@@ -340,7 +355,7 @@ class VaccinationAppointment():
         today = datetime.today().date()
         date_patient = datetime.fromtimestamp(self.appointment_date).date()
         if date_patient != today:
-            raise VaccineManagementException("Today is not the date")
+            raise VaccineManagementException(VaccinationAppointment.NOT_THE_DATE)
         return True
 
     def register_vaccination(self):
