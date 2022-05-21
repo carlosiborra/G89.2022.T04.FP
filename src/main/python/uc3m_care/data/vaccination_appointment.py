@@ -183,7 +183,6 @@ class VaccinationAppointment():
         # Check if date_signature exists in input file and save its value
         try:
             date_signature = file["date_signature"]
-            print(date_signature)
         except Exception as ex:
             raise VaccineManagementException("No date_signature in input_file") from ex
 
@@ -244,12 +243,9 @@ class VaccinationAppointment():
         appointment_found = False
         for i in range(len(appoint_file)):
             if appoint_file[i]["_VaccinationAppointment__date_signature"] == date_signature:
-                print("found appointment", i)
-                print(len(appoint_file))
                 appointment_index = i
                 appointment_found = True
                 break
-            print("Not found appointment", i)
             continue
 
         # If we did not encounter the date_signature - exception
@@ -281,10 +277,7 @@ class VaccinationAppointment():
         # We search for a vaccination with the given date_signature
         for i in range(len(vaccine_file)):
             if vaccine_file[i]["_VaccinationLog__date_signature"] == date_signature:
-                print(len(vaccine_file))
-                print("found vaccine", i)
                 raise VaccineManagementException("Vaccine has already been administered")
-            print("Not found vaccine", i)
             continue
 
         """00000000000000000000000000000000000000000000000000000000000000000000000000000000000"""
@@ -301,10 +294,7 @@ class VaccinationAppointment():
         # We search for a cancellation with the given date_signature
         for i in range(len(cancel_file)):
             if cancel_file[i]["date_signature"] == date_signature:
-                print(len(cancel_file))
-                print("found cancellation", i)
                 raise VaccineManagementException("Appointment has already been canceled")
-            print("Not found cancellation", i)
             continue
 
         """00000000000000000000000000000000000000000000000000000000000000000000000000000000000"""
