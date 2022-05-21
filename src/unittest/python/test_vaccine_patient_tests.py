@@ -10,6 +10,8 @@ from uc3m_care.storage.vaccination_json_store import VaccinationJsonStore
 from uc3m_care.storage.appointments_json_store import AppointmentsJsonStore
 from uc3m_care.storage.patients_json_store import PatientsJsonStore
 
+from uc3m_care.data.vaccination_appointment import VaccinationAppointment
+
 
 class TestVaccinePatient(TestCase):
     """Class for testing vaccine patient"""
@@ -98,7 +100,7 @@ class TestVaccinePatient(TestCase):
         with self.assertRaises(VaccineManagementException) as context_manager:
             my_manager.vaccine_patient(
                 "6666666ede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
-        self.assertEqual(context_manager.exception.message, "date_signature is not found")
+        self.assertEqual(context_manager.exception.message, VaccinationAppointment.SIGNATURE_NOT_FOUND)
         # read the file again to compare
         hash_new = file_store_vaccine.data_hash()
         self.assertEqual(hash_new, hash_original)
@@ -127,4 +129,4 @@ class TestVaccinePatient(TestCase):
         with self.assertRaises(VaccineManagementException) as context_manager:
             my_manager.vaccine_patient(
                 "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
-        self.assertEqual(context_manager.exception.message, "date_signature is not found")
+        self.assertEqual(context_manager.exception.message, VaccinationAppointment.SIGNATURE_NOT_FOUND)

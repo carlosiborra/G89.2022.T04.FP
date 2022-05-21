@@ -17,6 +17,8 @@ from uc3m_care.parser.appointment_json_parser import AppointmentJsonParser
 
 # pylint: disable=too-many-instance-attributes
 
+
+
 class VaccinationAppointment():
     """Class representing an appointment  for the vaccination of a patient"""
 
@@ -37,6 +39,15 @@ class VaccinationAppointment():
             # age must be expressed in senconds to be added to the timestap
             self.__appointment_date = self.__issued_at + (days * 24 * 60 * 60)
         self.__date_signature = self.vaccination_signature
+    SIGNATURE_NOT_FOUND = "date_signature is not found"
+    WRONG_VACCINATION_DATE_FORMAT = "Wrong vaccination_date format"
+    DATE_EQUAL_EARLIER = "vaccination_date equal or earlier than current_date"
+    JEDWJF = "JSON Decode Error - Wrong JSON Format"
+    FILE_NOT_FOUND = "File is not found"
+    NO_REASON = "No reason in input_file"
+    NO_CANCELATION_TYPE = "No cancelation_type in input_file"
+    NO_DATE_SIGNATURE = "No date_signature in input_file"
+    WRONG_N_ELEM = "Wrong number of elements in input_file"
 
     def __signature_string(self):
         """Composes the string to be used for generating the key for the date"""
@@ -106,8 +117,9 @@ class VaccinationAppointment():
         appointments_store = AppointmentsJsonStore()
         appointment_record = appointments_store.find_item(DateSignature(date_signature).value)
 
+
         if appointment_record is None:
-            raise VaccineManagementException("date_signature is not found")
+            raise VaccineManagementException(VaccinationAppointment.SIGNATURE_NOT_FOUND)
         freezer = freeze_time(
             datetime.fromtimestamp(appointment_record["_VaccinationAppointment__issued_at"]))
         freezer.start()
@@ -137,7 +149,7 @@ class VaccinationAppointment():
             vaccination_date = datetime.fromisoformat(date).timestamp()
         except Exception as ex:
             raise VaccineManagementException(
-                "Wrong vaccination_date format") from ex
+                VaccinationAppointment.WRONG_VACCINATION_DATE_FORMAT) from ex
 
         # Get the actual timestamp (for operation reasons) - frozen
         current_date = datetime.now().timestamp()
@@ -146,7 +158,7 @@ class VaccinationAppointment():
         if datetime.fromtimestamp(vaccination_date).date() \
                 <= datetime.fromtimestamp(current_date).date():
             raise VaccineManagementException(
-                "vaccination_date equal or earlier than current_date")
+                VaccinationAppointment.DATE_EQUAL_EARLIER)
 
         # Get the |days left - the timestamp| / number of days rounded
         days_left = round(abs(vaccination_date - current_date) / (24 * 60 * 60))
@@ -176,31 +188,31 @@ class VaccinationAppointment():
             with open(input_file, "r", encoding="utf-8", newline="") as file:
                 file = json.load(file)
         except FileNotFoundError as ex:
-            raise VaccineManagementException("File is not found") from ex
+            raise VaccineManagementException(VaccinationAppointment.FILE_NOT_FOUND) from ex
         except json.JSONDecodeError as ex:
-            raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from ex
+            raise VaccineManagementException(VaccinationAppointment.JEDWJF) from ex
 
         # Check if input_file is composed by 3 elements
         if len(file) != 3:
-            raise VaccineManagementException("Wrong number of elements in input_file")
+            raise VaccineManagementException(VaccinationAppointment.WRONG_N_ELEM)
 
         # Check if date_signature exists in input file and save its value
         try:
             date_signature = file["date_signature"]
         except Exception as ex:
-            raise VaccineManagementException("No date_signature in input_file") from ex
+            raise VaccineManagementException(VaccinationAppointment.NO_DATE_SIGNATURE) from ex
 
         # Check if cancelation_type exists in input file
         try:
             cancellation_type = file["cancelation_type"]
         except Exception as ex:
-            raise VaccineManagementException("No cancelation_type in input_file") from ex
+            raise VaccineManagementException(VaccinationAppointment.NO_CANCELATION_TYPE) from ex
 
         # Check if reason exists in input file
         try:
             reason = file["reason"]
         except Exception as ex:
-            raise VaccineManagementException("No reason in input_file") from ex
+            raise VaccineManagementException(VaccinationAppointment.NO_REASON) from ex
 
         # We check that date_signature type is sha256 - 64 bytes hexadecimal
         # ESTO DEBERIA IR DONDE LOS ATTRIBUTES, ES UN REGEX
@@ -240,7 +252,7 @@ class VaccinationAppointment():
         except FileNotFoundError as ex:
             raise VaccineManagementException("The appointment_file received does not exist") from ex
         except json.JSONDecodeError as ex:
-            raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from ex
+            raise VaccineManagementException(VaccinationAppointment.JEDWJF) from ex
 
         """00000000000000000000000000000000000000000000000000000000000000000000000000000000000"""
         # We search for an appointment with the given date_signature
@@ -276,7 +288,7 @@ class VaccinationAppointment():
         except FileNotFoundError as ex:
             raise VaccineManagementException("The vaccination_store does not exist") from ex
         except json.JSONDecodeError as ex:
-            raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from ex
+            raise VaccineManagementException(VaccinationAppointment.JEDWJF) from ex
 
         # We search for a vaccination with the given date_signature
         for i in range(len(vaccine_file)):
@@ -293,7 +305,7 @@ class VaccinationAppointment():
         except FileNotFoundError as ex:
             raise VaccineManagementException("The cancellation_file does not exist") from ex
         except json.JSONDecodeError as ex:
-            raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from ex
+            raise VaccineManagementException(VaccinationAppointment.JEDWJF) from ex
 
         # We search for a cancellation with the given date_signature
         for i in range(len(cancel_file)):
