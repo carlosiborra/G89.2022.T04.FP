@@ -223,22 +223,14 @@ class VaccinationAppointment:
 
         # We check that date_signature type is sha256 - 64 bytes hexadecimal
         try:
-            sha256_regex = r"^[a-fA-F0-9]{64}$"
-            res = re.fullmatch(sha256_regex, date_signature)
-            if not res:
-                raise VaccineManagementException(
-                    VaccinationAppointment.INVALID_DATE_SIGNATURE)
+            cls.validate_date_signature(date_signature)
         except TypeError as ex:
             raise VaccineManagementException(
                 VaccinationAppointment.DATE_SIGNATURE_NOT_A_STRING) from ex
 
         # We check that cancellation type is either Temporal or final
         try:
-            cancellation_type_regex = r"Final|Temporal"
-            res = re.fullmatch(cancellation_type_regex, cancellation_type)
-            if not res:
-                raise VaccineManagementException(
-                    VaccinationAppointment.INVALID_CANCELATION_TYPE)
+            cls.validate_cancelation_type(cancellation_type)
         except TypeError as ex:
             raise VaccineManagementException(
                 VaccinationAppointment.CANCELATION_TYPE_NOT_A_STRING) from ex
@@ -246,11 +238,7 @@ class VaccinationAppointment:
         # We check that reason string has between 2 and 100 characters
         # We also check that it is a string
         try:
-            reason_regex = r"^[\d\w\s]{2,100}$"
-            res = re.fullmatch(reason_regex, reason)
-            if not res:
-                raise VaccineManagementException(
-                    VaccinationAppointment.INVALID_REASON)
+            cls.validate_reason(reason)
         except TypeError as ex:
             raise VaccineManagementException(
                 VaccinationAppointment.REASON_NOT_A_STRING) from ex
@@ -346,6 +334,30 @@ class VaccinationAppointment:
 
         # After all the checks and creation of the cancellation, return date_signature
         return date_signature
+
+    @classmethod
+    def validate_reason(cls, reason):
+        reason_regex = r"^[\d\w\s]{2,100}$"
+        res = re.fullmatch(reason_regex, reason)
+        if not res:
+            raise VaccineManagementException(
+                VaccinationAppointment.INVALID_REASON)
+
+    @classmethod
+    def validate_cancelation_type(cls, cancellation_type):
+        cancellation_type_regex = r"Final|Temporal"
+        res = re.fullmatch(cancellation_type_regex, cancellation_type)
+        if not res:
+            raise VaccineManagementException(
+                VaccinationAppointment.INVALID_CANCELATION_TYPE)
+
+    @classmethod
+    def validate_date_signature(cls, date_signature):
+        sha256_regex = r"^[a-fA-F0-9]{64}$"
+        res = re.fullmatch(sha256_regex, date_signature)
+        if not res:
+            raise VaccineManagementException(
+                VaccinationAppointment.INVALID_DATE_SIGNATURE)
 
     def is_valid_today(self):
         """returns true if today is the appointment's date"""
