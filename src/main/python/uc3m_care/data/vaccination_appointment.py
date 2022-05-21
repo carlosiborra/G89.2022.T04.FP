@@ -180,6 +180,10 @@ class VaccinationAppointment():
         except json.JSONDecodeError as ex:
             raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from ex
 
+        # Check if input_file is composed by 3 elements
+        if len(file) != 3:
+            raise VaccineManagementException("Wrong number of elements in input_file")
+
         # Check if date_signature exists in input file and save its value
         try:
             date_signature = file["date_signature"]
