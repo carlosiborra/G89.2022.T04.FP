@@ -37,7 +37,6 @@ param_list_not_valid_ec_bv = [
     ("test_reason_ecnv2.json", "Invalid reason"),
     ("test_reason_ecnv3.json", "Invalid reason: not a string")]
 
-# ME FALTA EL VALID ONE
 param_list_not_valid_sa = [
     ("json_invalid_node1_deleted.json", "JSON Decode Error - Wrong JSON Format"),
     ("json_invalid_node1_duplicated.json", "JSON Decode Error - Wrong JSON Format"),
@@ -137,13 +136,15 @@ param_list_not_valid_sa = [
     ("json_invalid_node60_modified.json", "Invalid reason"),
     ("json_invalid_node61_modified.json", "JSON Decode Error - Wrong JSON Format")]
 
+param_list_valid_sa = [
+    ("json_valid.json", "230db695dfb51529e5210244929c3bd61f203d32da20adeaf143a03a312f198f")]
+
 # NOTA: HACE FALTA:
 # Se tendría que hacer con el REFACTOR en la parte de storage y data (+attr)
 # file_store_date = AppointmentsJsonStore() PERO CON CANCELLATION AL PREPARAR LOS TESTS
 
+
 # TESTS FOR EQUIVALENT CLASSES AND BOUNDARY VALUES
-
-
 class TestCancelAppointmentEcBv(unittest.TestCase):
     """Class for testing cancel_appointment EC/BV"""
 
@@ -243,7 +244,7 @@ class TestCancelAppointmentEcBv(unittest.TestCase):
             json.dump(brackets, f)
 
     @freeze_time("2022-03-08")
-    def test_specific_non_valid_ec_bv_encv6_cancellation_appointment(self):
+    def test_specific_not_valid_ec_bv_encv6_cancellation_appointment(self):
         """Specific tests: not valid test for test_date_signature_ecnv6.json in F1"""
         my_manager = VaccineManager()
         input_file = JSON_FILES_CANCELLATION + "test_date_signature_ecnv6.json"
@@ -288,7 +289,7 @@ class TestCancelAppointmentEcBv(unittest.TestCase):
             json.dump(brackets, f)
 
     @freeze_time("2022-03-08")
-    def test_specific_non_valid_ec_bv_encv7_cancellation_appointment(self):
+    def test_specific_not_valid_ec_bv_encv7_cancellation_appointment(self):
         """Specific tests: not valid test for test_date_signature_ecnv7.json in F1"""
         my_manager = VaccineManager()
         input_file = JSON_FILES_CANCELLATION + "test_date_signature_ecnv7.json"
@@ -331,7 +332,7 @@ class TestCancelAppointmentEcBv(unittest.TestCase):
             json.dump(brackets, f)
 
     @freeze_time("2022-03-08")
-    def test_specific_non_valid_ec_bv_encv8_cancellation_appointment(self):
+    def test_specific_not_valid_ec_bv_encv8_cancellation_appointment(self):
         """Specific tests: not valid test for test_date_signature_ecnv8.json in F1"""
         my_manager = VaccineManager()
         input_file = JSON_FILES_CANCELLATION + "test_date_signature_ecnv8.json"
@@ -378,14 +379,57 @@ class TestCancelAppointmentEcBv(unittest.TestCase):
 
 
 # TESTS FOR THE SYNTAX ANALYSIS
-
-
 class TestCancelAppointmentSyntaxAnalysis(unittest.TestCase):
     """Class for testing cancel_appointment syntax analysis"""
 
     @freeze_time("2022-03-08")
+    def test_parametrized_valid_sa_cancellation_appointment(self):
+        """Parametrized tests: valid case of syntax analysis"""
+        my_manager = VaccineManager()
+        file_appointment = JSON_FILES_RF2_PATH + "test_ok.json"
+        store_cancellation = JSON_FILES_PATH + "store_cancellation.json"
+
+        # Check the subtests
+        for input_file, date_signature in param_list_valid_sa:
+            input_file = JSON_FILES_CANCELLATION + input_file
+
+            # First, prepare my test, remove store patient
+            file_store = PatientsJsonStore()
+            file_store.delete_json_file()
+            file_store_date = AppointmentsJsonStore()
+            file_store_date.delete_json_file()
+
+            # Empty store_cancellation.json to prevent errors
+            with open(store_cancellation, "w", encoding="utf-8", newline="") as f:
+                f.close()
+            brackets = []
+            with open(store_cancellation, "w", encoding="utf-8", newline="") as f:
+                json.dump(brackets, f)
+
+            # Add a patient in the store
+            my_manager.request_vaccination_id("78924cb0-075a-4099-a3ee-f3b562e805b9",
+                                              "minombre tienelalongitudmaxima",
+                                              "Regular", "+34123456789", "6")
+
+            # Fixed Date in ISO format for testing purposes
+            # Create an appointment for the given patient
+            my_manager.get_vaccine_date(file_appointment, "2022-03-19")
+
+            # Check returned date_signature - TEST
+            with self.subTest(test=input_file):
+                value = my_manager.cancel_appointment(input_file)
+                self.assertEqual(value, date_signature)
+
+        # We empty store_cancellation.json to leave it clean and thus preventing future errors
+        with open(store_cancellation, "w", encoding="utf-8", newline="") as f:
+            f.close()
+        brackets = []
+        with open(store_cancellation, "w", encoding="utf-8", newline="") as f:
+            json.dump(brackets, f)
+
+    @freeze_time("2022-03-08")
     def test_parametrized_not_valid_sa_cancellation_appointment(self):
-        """Parametrized tests: not valid cases F1"""
+        """Parametrized tests: not valid cases of syntax analysis"""
         my_manager = VaccineManager()
         file_appointment = JSON_FILES_RF2_PATH + "test_ok.json"
         store_cancellation = JSON_FILES_PATH + "store_cancellation.json"
@@ -421,6 +465,175 @@ class TestCancelAppointmentSyntaxAnalysis(unittest.TestCase):
                 with self.assertRaises(VaccineManagementException) as c_m:
                     my_manager.cancel_appointment(input_file)
                 self.assertEqual(c_m.exception.message, raised_exception)
+
+        # We empty store_cancellation.json to leave it clean and thus preventing future errors
+        with open(store_cancellation, "w", encoding="utf-8", newline="") as f:
+            f.close()
+        brackets = []
+        with open(store_cancellation, "w", encoding="utf-8", newline="") as f:
+            json.dump(brackets, f)
+
+
+# TESTS FOR NON TESTED EXCEPTIONS
+class TestExtraNonTested(unittest.TestCase):
+    """Tests for specific exceptions not tested before"""
+
+    @freeze_time("2022-03-08")
+    def test_input_file_not_found(self):
+        """Test when input file is not found"""
+        my_manager = VaccineManager()
+        input_file = JSON_FILES_CANCELLATION + "invented.json"
+        file_appointment = JSON_FILES_RF2_PATH + "test_ok.json"
+        store_cancellation = JSON_FILES_PATH + "store_cancellation.json"
+
+        # First, prepare my test, remove store patient
+        file_store = PatientsJsonStore()
+        file_store.delete_json_file()
+        file_store_date = AppointmentsJsonStore()
+        file_store_date.delete_json_file()
+
+        # Clean the content of previous store_cancellation.json
+        with open(store_cancellation, "w", encoding="utf-8", newline="") as f:
+            f.close()
+        brackets = []
+        with open(store_cancellation, "w", encoding="utf-8", newline="") as f:
+            json.dump(brackets, f)
+
+        # Add a patient in the store
+        my_manager.request_vaccination_id("78924cb0-075a-4099-a3ee-f3b562e805b9",
+                                          "minombre tienelalongitudmaxima",
+                                          "Regular", "+34123456789", "6")
+
+        # Create an appointment for the given patient
+        my_manager.get_vaccine_date(file_appointment, "2022-03-19")
+
+        # Check raised exception - TEST
+        with self.assertRaises(VaccineManagementException) as c_m:
+            my_manager.cancel_appointment(input_file)
+        self.assertEqual(c_m.exception.message,
+                         "File is not found")
+
+        # We empty store_cancellation.json to leave it clean and thus preventing future errors
+        with open(store_cancellation, "w", encoding="utf-8", newline="") as f:
+            f.close()
+        brackets = []
+        with open(store_cancellation, "w", encoding="utf-8", newline="") as f:
+            json.dump(brackets, f)
+
+    @freeze_time("2022-03-08")
+    def test_input_file_not_json(self):
+        """Test when input file is not json"""
+        my_manager = VaccineManager()
+        input_file = JSON_FILES_CANCELLATION + "invented"
+        file_appointment = JSON_FILES_RF2_PATH + "test_ok.json"
+        store_cancellation = JSON_FILES_PATH + "store_cancellation.json"
+
+        # First, prepare my test, remove store patient
+        file_store = PatientsJsonStore()
+        file_store.delete_json_file()
+        file_store_date = AppointmentsJsonStore()
+        file_store_date.delete_json_file()
+
+        # Clean the content of previous store_cancellation.json
+        with open(store_cancellation, "w", encoding="utf-8", newline="") as f:
+            f.close()
+        brackets = []
+        with open(store_cancellation, "w", encoding="utf-8", newline="") as f:
+            json.dump(brackets, f)
+
+        # Add a patient in the store
+        my_manager.request_vaccination_id("78924cb0-075a-4099-a3ee-f3b562e805b9",
+                                          "minombre tienelalongitudmaxima",
+                                          "Regular", "+34123456789", "6")
+
+        # Create an appointment for the given patient
+        my_manager.get_vaccine_date(file_appointment, "2022-03-19")
+
+        # Check raised exception - TEST
+        with self.assertRaises(VaccineManagementException) as c_m:
+            my_manager.cancel_appointment(input_file)
+        self.assertEqual(c_m.exception.message,
+                         "File is not found")
+
+        # We empty store_cancellation.json to leave it clean and thus preventing future errors
+        with open(store_cancellation, "w", encoding="utf-8", newline="") as f:
+            f.close()
+        brackets = []
+        with open(store_cancellation, "w", encoding="utf-8", newline="") as f:
+            json.dump(brackets, f)
+
+    @freeze_time("2022-03-08")
+    def test_appointment_file_not_found(self):
+        """Test when appointment file is not found"""
+        my_manager = VaccineManager()
+        input_file = JSON_FILES_CANCELLATION + "json_valid.json"
+        file_appointment = JSON_FILES_RF2_PATH + "nofile.json"
+        store_cancellation = JSON_FILES_PATH + "store_cancellation.json"
+
+        # First, prepare my test, remove store patient
+        file_store = PatientsJsonStore()
+        file_store.delete_json_file()
+        file_store_date = AppointmentsJsonStore()
+        file_store_date.delete_json_file()
+
+        # Clean the content of previous store_cancellation.json
+        with open(store_cancellation, "w", encoding="utf-8", newline="") as f:
+            f.close()
+        brackets = []
+        with open(store_cancellation, "w", encoding="utf-8", newline="") as f:
+            json.dump(brackets, f)
+
+        # Add a patient in the store
+        my_manager.request_vaccination_id("78924cb0-075a-4099-a3ee-f3b562e805b9",
+                                          "minombre tienelalongitudmaxima",
+                                          "Regular", "+34123456789", "6")
+
+        # Check raised exception - TEST
+        with self.assertRaises(VaccineManagementException) as c_m:
+            my_manager.get_vaccine_date(file_appointment, "2022-03-19")
+            my_manager.cancel_appointment(input_file)
+        self.assertEqual(c_m.exception.message,
+                         "File is not found")
+
+        # We empty store_cancellation.json to leave it clean and thus preventing future errors
+        with open(store_cancellation, "w", encoding="utf-8", newline="") as f:
+            f.close()
+        brackets = []
+        with open(store_cancellation, "w", encoding="utf-8", newline="") as f:
+            json.dump(brackets, f)
+
+    @freeze_time("2022-03-08")
+    def test_appointment_file_not_json(self):
+        """Test when appointment file is not json"""
+        my_manager = VaccineManager()
+        input_file = JSON_FILES_CANCELLATION + "json_valid.json"
+        file_appointment = JSON_FILES_RF2_PATH + "nofile"
+        store_cancellation = JSON_FILES_PATH + "store_cancellation.json"
+
+        # First, prepare my test, remove store patient
+        file_store = PatientsJsonStore()
+        file_store.delete_json_file()
+        file_store_date = AppointmentsJsonStore()
+        file_store_date.delete_json_file()
+
+        # Clean the content of previous store_cancellation.json
+        with open(store_cancellation, "w", encoding="utf-8", newline="") as f:
+            f.close()
+        brackets = []
+        with open(store_cancellation, "w", encoding="utf-8", newline="") as f:
+            json.dump(brackets, f)
+
+        # Add a patient in the store
+        my_manager.request_vaccination_id("78924cb0-075a-4099-a3ee-f3b562e805b9",
+                                          "minombre tienelalongitudmaxima",
+                                          "Regular", "+34123456789", "6")
+
+        # Check raised exception - TEST
+        with self.assertRaises(VaccineManagementException) as c_m:
+            my_manager.get_vaccine_date(file_appointment, "2022-03-19")
+            my_manager.cancel_appointment(input_file)
+        self.assertEqual(c_m.exception.message,
+                         "File is not found")
 
         # We empty store_cancellation.json to leave it clean and thus preventing future errors
         with open(store_cancellation, "w", encoding="utf-8", newline="") as f:

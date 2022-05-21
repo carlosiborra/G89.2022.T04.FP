@@ -238,7 +238,7 @@ class VaccinationAppointment():
             with open(appointment_file, "r", encoding="utf-8", newline="") as appoint_file:
                 appoint_file = json.load(appoint_file)
         except FileNotFoundError as ex:
-            raise VaccineManagementException("The appointment received does not exist") from ex
+            raise VaccineManagementException("The appointment_file received does not exist") from ex
         except json.JSONDecodeError as ex:
             raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from ex
 

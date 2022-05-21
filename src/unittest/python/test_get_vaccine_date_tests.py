@@ -11,42 +11,56 @@ from uc3m_care import PatientsJsonStore
 
 param_list_nok = [
     ("test_dup_all.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_char_plus.json", "2022-03-18", "phone number is not valid"),
-                  ("test_dup_colon.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_comillas.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_comma.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_content.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_data1.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_data1_content.json", "2022-03-18", "patient system id is not valid"),
-                  ("test_dup_data2.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_data2_content.json", "2022-03-18", "phone number is not valid"),
-                  ("test_dup_field1.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_field2.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_final_bracket.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_initial_bracket.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_label1.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_label1_content.json", "2022-03-18", "Bad label patient_id"),
-                  ("test_dup_label2.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_label2_content.json", "2022-03-18", "Bad label contact phone"),
-                  ("test_dup_phone.json", "2022-03-18", "phone number is not valid"),
-                  ("test_empty.json", "2022-03-18", "Bad label patient_id"),
-                  ("test_mod_char_plus.json", "2022-03-18", "phone number is not valid"),
-                  ("test_mod_data1.json", "2022-03-18", "patient system id is not valid"),
-                  ("test_mod_data2.json", "2022-03-18", "phone number is not valid"),
-                  ("test_mod_label1.json", "2022-03-18", "Bad label patient_id"),
-                  ("test_mod_label2.json", "2022-03-18", "Bad label contact phone"),
-                  ("test_mod_phone.json", "2022-03-18", "phone number is not valid"),
-                  ("test_no_char_plus.json", "2022-03-18", "phone number is not valid"),
-                  ("test_no_colon.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_no_comillas.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_no_phone.json", "2022-03-18", "phone number is not valid"),
-                  # Tests to check the date regex and the difference in time
-                  # HAY QUE CREAR MUCHOS MAS PARA CHEQUEAR!!!
-                  ("test_ok.json", "2022-03-07", "vaccination_date equal or earlier than current_date"),
-                  ("test_ok.json", "2022-22-01", "Wrong vaccination_date format"),
-                  ("test_ok.json", 20221201, "Wrong vaccination_date format"),
-                  ("test_ok.json", "12-2022-01", "Wrong vaccination_date format"),
-                  ("test_ok.json", "213-12-2022", "Wrong vaccination_date format")]
+    ("test_dup_char_plus.json", "2022-03-18", "phone number is not valid"),
+    ("test_dup_colon.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
+    ("test_dup_comillas.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
+    ("test_dup_comma.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
+    ("test_dup_content.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
+    ("test_dup_data1.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
+    ("test_dup_data1_content.json", "2022-03-18", "patient system id is not valid"),
+    ("test_dup_data2.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
+    ("test_dup_data2_content.json", "2022-03-18", "phone number is not valid"),
+    ("test_dup_field1.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
+    ("test_dup_field2.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
+    ("test_dup_final_bracket.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
+    ("test_dup_initial_bracket.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
+    ("test_dup_label1.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
+    ("test_dup_label1_content.json", "2022-03-18", "Bad label patient_id"),
+    ("test_dup_label2.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
+    ("test_dup_label2_content.json", "2022-03-18", "Bad label contact phone"),
+    ("test_dup_phone.json", "2022-03-18", "phone number is not valid"),
+    ("test_empty.json", "2022-03-18", "Bad label patient_id"),
+    ("test_mod_char_plus.json", "2022-03-18", "phone number is not valid"),
+    ("test_mod_data1.json", "2022-03-18", "patient system id is not valid"),
+    ("test_mod_data2.json", "2022-03-18", "phone number is not valid"),
+    ("test_mod_label1.json", "2022-03-18", "Bad label patient_id"),
+    ("test_mod_label2.json", "2022-03-18", "Bad label contact phone"),
+    ("test_mod_phone.json", "2022-03-18", "phone number is not valid"),
+    ("test_no_char_plus.json", "2022-03-18", "phone number is not valid"),
+    ("test_no_colon.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
+    ("test_no_comillas.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
+    ("test_no_phone.json", "2022-03-18", "phone number is not valid"),
+    # INVALID DATE TESTS
+    ("test_ok.json", "2022-03-07", "vaccination_date equal or earlier than current_date"),
+    ("test_ok.json", "2022-03-08", "vaccination_date equal or earlier than current_date"),
+    ("test_ok.json", "2021-03-18", "vaccination_date equal or earlier than current_date"),
+    ("test_ok.json", "2022-02-18", "vaccination_date equal or earlier than current_date"),
+    ("test_ok.json", "2022-13-01", "Wrong vaccination_date format"),
+    ("test_ok.json", "2022-00-04", "Wrong vaccination_date format"),
+    ("test_ok.json", "2022-04-00", "Wrong vaccination_date format"),
+    ("test_ok.json", "04-2022-04", "Wrong vaccination_date format"),
+    ("test_ok.json", "04-04-2022", "Wrong vaccination_date format"),
+    ("test_ok.json", "22-04-04", "Wrong vaccination_date format"),
+    ("test_ok.json", "2022-4-04", "Wrong vaccination_date format"),
+    ("test_ok.json", "2022-04-4", "Wrong vaccination_date format"),
+    ("test_ok.json", "2022-4-4", "Wrong vaccination_date format"),
+    ("test_ok.json", "202203-18", "Wrong vaccination_date format"),
+    ("test_ok.json", "202203 18", "Wrong vaccination_date format"),
+    ("test_ok.json", "2022-0318", "Wrong vaccination_date format"),
+    ("test_ok.json", "2022 0318", "Wrong vaccination_date format"),
+    ("test_ok.json", "2022 03 18", "Wrong vaccination_date format"),
+    ("test_ok.json", "20220318", "Wrong vaccination_date format"),
+    ("test_ok.json", 20221201, "Wrong vaccination_date format")]
 
 
 class TestGetVaccineDate(TestCase):
@@ -134,7 +148,7 @@ class TestGetVaccineDate(TestCase):
 
     @freeze_time("2022-03-08")
     def test_get_vaccine_date_no_ok_no_quotes(self):
-        """ no quotes , not valid """
+        """No quotes , not valid"""
         file_test = JSON_FILES_RF2_PATH + "test_nok_no_comillas.json"
         my_manager = VaccineManager()
         file_store_date = AppointmentsJsonStore()
@@ -157,7 +171,7 @@ class TestGetVaccineDate(TestCase):
 
     @freeze_time("2022-03-08")
     def test_get_vaccine_date_no_ok_data_manipulated(self):
-        """ no quotes , not valid """
+        """No quotes , not valid"""
         file_test = JSON_FILES_RF2_PATH + "test_ok.json"
         my_manager = VaccineManager()
         file_store = JSON_FILES_PATH + "store_patient.json"
