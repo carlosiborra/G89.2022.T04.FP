@@ -25,8 +25,10 @@ from uc3m_care import PatientsJsonStore
 #   2a39433e-f5d7-489c-b263-a68192e4d286
 # """
 from uc3m_care.data.attribute.attribute_age import Age
-
 from uc3m_care.data.attribute.attribute_phone_number import PhoneNumber
+from uc3m_care.data.attribute.attribute_full_name import FullName
+from uc3m_care.data.attribute.attribute_registration_type import RegistrationType
+from uc3m_care.data.attribute.attribute_patient_id import PatientId
 
 param_list_ok = [("78924cb0-075a-4099-a3ee-f3b562e805b9", "minombre tienelalongitudmaxima", "Regular",
                   "+34123456789", "6", "72b72255619afeed8bd26861a2bc2caf", "test_1"),
@@ -41,37 +43,37 @@ param_list_ok = [("78924cb0-075a-4099-a3ee-f3b562e805b9", "minombre tienelalongi
 param_list_nok = [("bb5dbd6f-d8b4-113f-8eb9-dd262cfc54e0",
                    "minombre tienelalongitudmaxima", "Regular",
                    "+34123456789",
-                   "6", "UUID invalid", "test_5 , is not uuid v4"),
+                   "6", PatientId.UUID_INVALID, "test_5 , is not uuid v4"),
                   ("zb0506db-50de-493b-abf9-1fb44816b628",
                    "minombre tieneuncharmenosqmax", "Family",
-                   "+34333456789", "7", "Id received is not a UUID",
+                   "+34333456789", "7", PatientId.ID_NOT_UUID,
                    "test_6, is not hex uuid"),
                   ("2b0506db-50de-493b-abf9-1fb44816b62",
                    "minombre tiene dosblancos", "Regular",
-                   "+34333456789", "125", "Id received is not a UUID",
+                   "+34333456789", "125", PatientId.ID_NOT_UUID,
                    "test_7, patiend id 34 long"),
                   ("2b0506db-50de-493b-abf9-1fb44816b6289", "m m", "Regular",
-                   "+34333456789", "124", "Id received is not a UUID",
+                   "+34333456789", "124", PatientId.ID_NOT_UUID,
                    "test_8 , patiend id 36 long"),
                   ("6071d52e-ab42-452d-837c-0639367db79f",
                    "minombre tienelalongitudmaxima",
-                   "Regularcito", "+34123456789", "6", "Registration type is nor valid",
+                   "Regularcito", "+34123456789", "6", RegistrationType.REGISTRATION_TYPE_NOT_VALID,
                    "test_9 registration type not valid"),
                   ("6071d52e-ab42-452d-837c-0639367db79f",
                    "minombre tieneun01", "Family",
-                   "+34333456789", "7", "name surname is not valid",
+                   "+34333456789", "7", FullName.NAME_SURNAME_NOT_VALID,
                    "test_10 name no char"),
                   ("6071d52e-ab42-452d-837c-0639367db79f",
                    "minombre tienelalongitudmaximay", "Regular",
-                   "+34333456789", "125", "name surname is not valid",
+                   "+34333456789", "125", FullName.NAME_SURNAME_NOT_VALID,
                    "test_11, long 31 de name"),
                   ("6071d52e-ab42-452d-837c-0639367db79f",
                    "minombrenotieneblancoentrecha", "Regular",
-                   "+34333456789", "124", "name surname is not valid",
+                   "+34333456789", "124", FullName.NAME_SURNAME_NOT_VALID,
                    "test_12, long 29 y 0 blanco"),
                   ("6071d52e-ab42-452d-837c-0639367db79f",
                    "", "Regular",
-                   "+34333456789", "124", "name surname is not valid",
+                   "+34333456789", "124", FullName.NAME_SURNAME_NOT_VALID,
                    "test_13, 0 char"),
                   ("6071d52e-ab42-452d-837c-0639367db79f",
                    "Pedro Perez", "Regular",
@@ -188,7 +190,7 @@ class TestRequestVacID(unittest.TestCase):
             my_request.request_vaccination_id("bb5dbd6f-d8b4-113f-8eb9-dd262cfc54e0",
                                               "Pedro Hernandez", "Regular",
                                               "+34123456789", "22")
-        self.assertEqual("UUID invalid", context_manager.exception.message)
+        self.assertEqual(PatientId.UUID_INVALID, context_manager.exception.message)
 
     def test_request_vaccination_id_nok_uuid_2(self):
         """UUID is not hexadecimal"""

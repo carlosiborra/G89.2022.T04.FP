@@ -8,8 +8,8 @@ from uc3m_care import VaccineManagementException
 from uc3m_care import JSON_FILES_PATH, JSON_FILES_RF2_PATH
 from uc3m_care import AppointmentsJsonStore
 from uc3m_care import PatientsJsonStore
-
 from uc3m_care.data.attribute.attribute_phone_number import PhoneNumber
+from uc3m_care.data.attribute.attribute_patient_system_id import PatientSystemId
 
 param_list_nok = [
     ("test_dup_all.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
@@ -19,7 +19,7 @@ param_list_nok = [
     ("test_dup_comma.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
     ("test_dup_content.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
     ("test_dup_data1.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
-    ("test_dup_data1_content.json", "2022-03-18", "patient system id is not valid"),
+    ("test_dup_data1_content.json", "2022-03-18", PatientSystemId.PATIENT_ID_NOT_VALID),
     ("test_dup_data2.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
     ("test_dup_data2_content.json", "2022-03-18", PhoneNumber.PHONE_NUMBER_NOT_VALID),
     ("test_dup_field1.json", "2022-03-18", "JSON Decode Error - Wrong JSON Format"),
@@ -33,7 +33,7 @@ param_list_nok = [
     ("test_dup_phone.json", "2022-03-18", PhoneNumber.PHONE_NUMBER_NOT_VALID),
     ("test_empty.json", "2022-03-18", "Bad label patient_id"),
     ("test_mod_char_plus.json", "2022-03-18", PhoneNumber.PHONE_NUMBER_NOT_VALID),
-    ("test_mod_data1.json", "2022-03-18", "patient system id is not valid"),
+    ("test_mod_data1.json", "2022-03-18", PatientSystemId.PATIENT_ID_NOT_VALID),
     ("test_mod_data2.json", "2022-03-18", PhoneNumber.PHONE_NUMBER_NOT_VALID),
     ("test_mod_label1.json", "2022-03-18", "Bad label patient_id"),
     ("test_mod_label2.json", "2022-03-18", "Bad label contact phone"),
@@ -141,7 +141,7 @@ class TestGetVaccineDate(TestCase):
         # Check the method
         with self.assertRaises(VaccineManagementException) as c_m:
             my_manager.get_vaccine_date(file_test, date)
-        self.assertEqual(c_m.exception.message, "patient system id is not valid")
+        self.assertEqual(c_m.exception.message, PatientSystemId.PATIENT_ID_NOT_VALID)
 
         # Read the file again to compare
         hash_new = file_store_date.data_hash()
