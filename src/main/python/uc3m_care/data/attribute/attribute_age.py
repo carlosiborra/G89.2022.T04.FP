@@ -3,9 +3,12 @@ from uc3m_care.data.attribute.attribute import Attribute
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
 
 #pylint: disable=too-few-public-methods
+
+
 class Age(Attribute):
     """Classs for the attribute age"""
-    _validation_error_message = "age is not valid"
+    AGE_NOT_VALID = "age is not valid"
+    _validation_error_message = AGE_NOT_VALID
 
     def _validate( self, attr_value: str ) -> str:
         """Validates the age according to the requirements"""

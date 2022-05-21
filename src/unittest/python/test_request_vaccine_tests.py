@@ -24,7 +24,9 @@ from uc3m_care import PatientsJsonStore
 #   7c95ddbf-074c-4c1e-a6f7-c1d663a6f87c
 #   2a39433e-f5d7-489c-b263-a68192e4d286
 # """
+from uc3m_care.data.attribute.attribute_age import Age
 
+from uc3m_care.data.attribute.attribute_phone_number import PhoneNumber
 
 param_list_ok = [("78924cb0-075a-4099-a3ee-f3b562e805b9", "minombre tienelalongitudmaxima", "Regular",
                   "+34123456789", "6", "72b72255619afeed8bd26861a2bc2caf", "test_1"),
@@ -73,27 +75,27 @@ param_list_nok = [("bb5dbd6f-d8b4-113f-8eb9-dd262cfc54e0",
                    "test_13, 0 char"),
                   ("6071d52e-ab42-452d-837c-0639367db79f",
                    "Pedro Perez", "Regular",
-                   "+3433345678a", "124", "phone number is not valid",
+                   "+3433345678a", "124", PhoneNumber.PHONE_NUMBER_NOT_VALID,
                    "test_14, phone con char"),
                   ("6071d52e-ab42-452d-837c-0639367db79f",
                    "Pedro Perez", "Regular",
-                   "+343334567892", "124", "phone number is not valid",
+                   "+343334567892", "124", PhoneNumber.PHONE_NUMBER_NOT_VALID,
                    "test_15, phone 12 char"),
                   ("6071d52e-ab42-452d-837c-0639367db79f",
                    "Pedro Perez", "Regular",
-                   "+3433345678", "124", "phone number is not valid",
+                   "+3433345678", "124", PhoneNumber.PHONE_NUMBER_NOT_VALID,
                    "test_16, phone 10 char"),
                   ("6071d52e-ab42-452d-837c-0639367db79f",
                    "Pedro Perez", "Regular",
-                   "+34333456789", "12a", "age is not valid",
+                   "+34333456789", "12a", Age.AGE_NOT_VALID,
                    "test_17, age no digit"),
                   ("6071d52e-ab42-452d-837c-0639367db79f",
                    "Pedro Perez", "Regular",
-                   "+34333456789", "5", "age is not valid",
+                   "+34333456789", "5", Age.AGE_NOT_VALID,
                    "test_18, age is 5"),
                   ("6071d52e-ab42-452d-837c-0639367db79f",
                    "Pedro Perez", "Regular",
-                   "+34333456789", "126", "age is not valid",
+                   "+34333456789", "126", Age.AGE_NOT_VALID,
                    "test_19, age is 126")
                   ]
 
