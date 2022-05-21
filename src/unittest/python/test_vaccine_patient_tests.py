@@ -9,12 +9,13 @@ from uc3m_care import JSON_FILES_RF2_PATH
 from uc3m_care.storage.vaccination_json_store import VaccinationJsonStore
 from uc3m_care.storage.appointments_json_store import AppointmentsJsonStore
 from uc3m_care.storage.patients_json_store import PatientsJsonStore
-
 from uc3m_care.data.vaccination_appointment import VaccinationAppointment
+from uc3m_care.data.attribute.attribute_date_signature import DateSignature
 
 
 class TestVaccinePatient(TestCase):
     """Class for testing vaccine patient"""
+    STORE_DATE_NOT_FOUND = "Store_date not found"
 
     @freeze_time("2022-03-08")
     def setUp(self):
@@ -68,7 +69,7 @@ class TestVaccinePatient(TestCase):
         with self.assertRaises(VaccineManagementException) as context_manager:
             my_manager.vaccine_patient(
                 "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
-        self.assertEqual(context_manager.exception.message, "Today is not the date")
+        self.assertEqual(context_manager.exception.message, VaccinationAppointment.NOT_THE_DATE)
         # read the file again to compare
         hash_new = file_store_vaccine.data_hash()
 
@@ -84,7 +85,7 @@ class TestVaccinePatient(TestCase):
         with self.assertRaises(VaccineManagementException) as context_manager:
             my_manager.vaccine_patient(
                 "a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")  # One char less
-        self.assertEqual(context_manager.exception.message, "date_signature format is not valid")
+        self.assertEqual(context_manager.exception.message, DateSignature.DATE_SIGNATURE_FORMAT_NOT_VALID)
         hash_new = file_store_vaccine.data_hash()
 
         self.assertEqual(hash_new, hash_original)
@@ -116,7 +117,7 @@ class TestVaccinePatient(TestCase):
         with self.assertRaises(VaccineManagementException) as context_manager:
             my_manager.vaccine_patient(
                 "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
-        self.assertEqual(context_manager.exception.message, "Store_date not found")
+        self.assertEqual(context_manager.exception.message, TestVaccinePatient.STORE_DATE_NOT_FOUND)
 
     @freeze_time("2022-03-18")
     def test_vaccine_patient_store_date_is_empty(self):
