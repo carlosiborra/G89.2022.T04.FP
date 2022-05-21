@@ -21,24 +21,6 @@ from uc3m_care.parser.appointment_json_parser import AppointmentJsonParser
 
 class VaccinationAppointment():
     """Class representing an appointment  for the vaccination of a patient"""
-
-    def __init__(self, patient_sys_id, patient_phone_number, days):
-        self.__alg = "SHA-256"
-        self.__type = "DS"
-        self.__patient_sys_id = PatientSystemId(patient_sys_id).value
-        patient = VaccinePatientRegister.create_patient_from_patient_system_id(
-            self.__patient_sys_id)
-        self.__patient_id = patient.patient_id
-        self.__phone_number = PhoneNumber(patient_phone_number).value
-        justnow = datetime.utcnow()
-        self.__issued_at = datetime.timestamp(justnow)
-        if days == 0:
-            self.__appointment_date = 0
-        else:
-            # timestamp is represneted in seconds.microseconds
-            # age must be expressed in senconds to be added to the timestap
-            self.__appointment_date = self.__issued_at + (days * 24 * 60 * 60)
-        self.__date_signature = self.vaccination_signature
     SIGNATURE_NOT_FOUND = "date_signature is not found"
     WRONG_VACCINATION_DATE_FORMAT = "Wrong vaccination_date format"
     DATE_EQUAL_EARLIER = "vaccination_date equal or earlier than current_date"
@@ -63,6 +45,25 @@ class VaccinationAppointment():
     APPOINTMENT_FILE_DOES_NOT_EXIST = "The appointment_file received does not exist"
     NOT_THE_DATE = "Today is not the date"
     ERROR_CANCELING_APPOINTMENT = "Error when cancelling the appointment"
+
+    def __init__(self, patient_sys_id, patient_phone_number, days):
+        self.__alg = "SHA-256"
+        self.__type = "DS"
+        self.__patient_sys_id = PatientSystemId(patient_sys_id).value
+        patient = VaccinePatientRegister.create_patient_from_patient_system_id(
+            self.__patient_sys_id)
+        self.__patient_id = patient.patient_id
+        self.__phone_number = PhoneNumber(patient_phone_number).value
+        justnow = datetime.utcnow()
+        self.__issued_at = datetime.timestamp(justnow)
+        if days == 0:
+            self.__appointment_date = 0
+        else:
+            # timestamp is represneted in seconds.microseconds
+            # age must be expressed in senconds to be added to the timestap
+            self.__appointment_date = self.__issued_at + (days * 24 * 60 * 60)
+        self.__date_signature = self.vaccination_signature
+
 
     def __signature_string(self):
         """Composes the string to be used for generating the key for the date"""

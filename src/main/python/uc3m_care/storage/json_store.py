@@ -11,6 +11,8 @@ class JsonStore():
     _FILE_PATH = ""
     _ID_FIELD = ""
     _data_list = []
+    WRONG_JSON_FORMAT = "JSON Decode Error - Wrong JSON Format"
+    WRONG_FILE_PATH = "Wrong file or file path"
 
     def __init__(self):
         self.load()
@@ -24,7 +26,7 @@ class JsonStore():
             # file is not found , so  init my data_list
             self._data_list = []
         except json.JSONDecodeError as exception_raised:
-            raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") \
+            raise VaccineManagementException(JsonStore.WRONG_JSON_FORMAT) \
                 from exception_raised
 
     def save(self):
@@ -33,7 +35,7 @@ class JsonStore():
             with open(self._FILE_PATH, "w", encoding="utf-8", newline="") as file:
                 json.dump(self._data_list, file, indent=2)
         except FileNotFoundError as ex:
-            raise VaccineManagementException("Wrong file or file path") from ex
+            raise VaccineManagementException(JsonStore.WRONG_FILE_PATH) from ex
 
     def add_item(self, item):
         """Adds a new item to the datalist and updates the JSON file"""
