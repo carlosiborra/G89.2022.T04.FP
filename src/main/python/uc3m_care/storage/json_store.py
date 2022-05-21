@@ -1,4 +1,5 @@
 """Superclass for managing storage in JSON files"""
+
 import hashlib
 import json
 import os
@@ -6,7 +7,7 @@ import os
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
 
 
-class JsonStore():
+class JsonStore:
     """Superclass for managing storage in JSON files"""
     _FILE_PATH = ""
     _ID_FIELD = ""
@@ -18,7 +19,7 @@ class JsonStore():
         self.load()
 
     def load(self):
-        """Loading data into the datalist"""
+        """Loading data into the data-list"""
         try:
             with open(self._FILE_PATH, "r", encoding="utf-8", newline="") as file:
                 self._data_list = json.load(file)
@@ -30,7 +31,7 @@ class JsonStore():
                 from exception_raised
 
     def save(self):
-        """Saves the datalist in the JSON file"""
+        """Saves the data-list in the JSON file"""
         try:
             with open(self._FILE_PATH, "w", encoding="utf-8", newline="") as file:
                 json.dump(self._data_list, file, indent=2)
@@ -38,13 +39,13 @@ class JsonStore():
             raise VaccineManagementException(JsonStore.WRONG_FILE_PATH) from ex
 
     def add_item(self, item):
-        """Adds a new item to the datalist and updates the JSON file"""
+        """Adds a new item to the data-list and updates the JSON file"""
         self.load()
         self._data_list.append(item.__dict__)
         self.save()
 
     def find_item(self, key_value, key=None):
-        """Finds the first item with the key_value in the datalist"""
+        """Finds the first item with the key_value in the data-list"""
         self.load()
         if key is None:
             key = self._ID_FIELD
@@ -54,7 +55,7 @@ class JsonStore():
         return None
 
     def find_items_list(self, key_value, key=None):
-        """Finds all the items with the key_value in the datalist"""
+        """Finds all the items with the key_value in the data-list"""
         self.load()
         if key is None:
             key = self._ID_FIELD

@@ -6,7 +6,7 @@ from uc3m_care.exception.vaccine_management_exception import VaccineManagementEx
 
 
 class VaccinationJsonStore():
-    """Implmentation of the singleton pattern"""
+    """Implementation of the singleton pattern"""
 
     # pylint: disable=invalid-name
     class __VaccinationJsonStore(JsonStore):
@@ -20,7 +20,8 @@ class VaccinationJsonStore():
             # pylint: disable=import-outside-toplevel, cyclic-import
             from uc3m_care.data.vaccination_log import VaccinationLog
             if not isinstance(item, VaccinationLog):
-                raise VaccineManagementException(VaccinationJsonStore.__VaccinationJsonStore.VACCINATION_LOG_OBJECT)
+                raise VaccineManagementException(
+                    VaccinationJsonStore.__VaccinationJsonStore.VACCINATION_LOG_OBJECT)
             super().add_item(item)
 
     instance = None

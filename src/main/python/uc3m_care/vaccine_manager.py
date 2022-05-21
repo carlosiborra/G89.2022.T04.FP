@@ -43,7 +43,8 @@ class VaccineManager:
 
         def cancel_appointment(self, input_file):
             """Deletes an appointment from json file"""
-            cancelled_appointment = VaccinationAppointment.cancel_appointment_from_json_file(input_file)
+            cancelled_appointment = VaccinationAppointment.\
+                cancel_appointment_from_json_file(input_file)
             return cancelled_appointment
 
     instance = None

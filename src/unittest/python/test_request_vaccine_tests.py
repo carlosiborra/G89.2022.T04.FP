@@ -1,4 +1,5 @@
 """Module for testing request_vaccination_id"""
+
 import unittest
 from freezegun import freeze_time
 
@@ -30,13 +31,17 @@ from uc3m_care.data.attribute.attribute_full_name import FullName
 from uc3m_care.data.attribute.attribute_registration_type import RegistrationType
 from uc3m_care.data.attribute.attribute_patient_id import PatientId
 
-param_list_ok = [("78924cb0-075a-4099-a3ee-f3b562e805b9", "minombre tienelalongitudmaxima", "Regular",
+param_list_ok = [("78924cb0-075a-4099-a3ee-f3b562e805b9",
+                  "minombre tienelalongitudmaxima", "Regular",
                   "+34123456789", "6", "72b72255619afeed8bd26861a2bc2caf", "test_1"),
-                 ("57c811e5-3f5a-4a89-bbb8-11c0464d53e6", "minombre tieneuncharmenosqmax", "Family",
+                 ("57c811e5-3f5a-4a89-bbb8-11c0464d53e6",
+                  "minombre tieneuncharmenosqmax", "Family",
                   "+34333456789", "7", "0d49256644b963208cb8db044a3ebbe7", "test_2"),
-                 ("cde0bc01-5bc7-4c0c-90d6-94c9549e6abd", "minombre tiene dosblancos", "Regular",
+                 ("cde0bc01-5bc7-4c0c-90d6-94c9549e6abd",
+                  "minombre tiene dosblancos", "Regular",
                   "+34333456789", "125", "7fbd065ae9c274c7ccf30c50c0cd87a3", "test_3"),
-                 ("a729d963-e0dd-47d0-8bc6-b6c595ad0098", "m m", "Regular",
+                 ("a729d963-e0dd-47d0-8bc6-b6c595ad0098",
+                  "m m", "Regular",
                   "+44333456789", "124", "76a1b7346a927ef02ad5098f673ca876", "test_4")
                  ]
 
@@ -147,8 +152,9 @@ class TestRequestVacID(unittest.TestCase):
                                                   "Pedro Perez", "Regular", "+34333456789", "124")
 
         with self.assertRaises(VaccineManagementException) as context_manager:
-            value = my_request.request_vaccination_id("a729d963-e0dd-47d0-8bc6-b6c595ad0098",
-                                                      "Pedro Perez", "Regular", "+34333456789", "124")
+            value = my_request.request_vaccination_id(
+                "a729d963-e0dd-47d0-8bc6-b6c595ad0098",
+                "Pedro Perez", "Regular", "+34333456789", "124")
         self.assertEqual(context_manager.exception.message,
                          "patien_id is registered in store_patient")
 
@@ -176,8 +182,9 @@ class TestRequestVacID(unittest.TestCase):
         file_store.delete_json_file()
         my_request = VaccineManager()
 
-        value = my_request.request_vaccination_id("bb5dbd6f-d8b4-413f-8eb9-dd262cfc54e0",
-                                                  "Pedro Hernandez", "Regular", "+34123456789", "22")
+        value = my_request.request_vaccination_id(
+            "bb5dbd6f-d8b4-413f-8eb9-dd262cfc54e0",
+            "Pedro Hernandez", "Regular", "+34123456789", "22")
         self.assertEqual("9bc3dcae6701f7f54d71e36e0df12a59", value)
         self.assertIsNotNone(
             file_store.find_item(value))

@@ -1,6 +1,6 @@
 """Module for testing vaccine_patient"""
+
 import unittest
-from datetime import datetime
 from unittest import TestCase
 from freezegun import freeze_time
 from uc3m_care import VaccineManager
@@ -49,11 +49,11 @@ class TestVaccinePatient(TestCase):
         """basic path , signature is found , and date = today"""
         my_manager = VaccineManager()
         value = my_manager.vaccine_patient \
-            ("5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")  # SE HA CAMBIADO
+            ("5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")  # CHANGED
         self.assertTrue(value)
         vaccination_log = VaccinationJsonStore()
         vaccination_entry = vaccination_log.find_item \
-            ("5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")  # SE HA CAMBIADO
+            ("5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")  # CHANGED
         self.assertIsNotNone(vaccination_entry)
 
     @freeze_time("2022-04-18")
@@ -85,7 +85,8 @@ class TestVaccinePatient(TestCase):
         with self.assertRaises(VaccineManagementException) as context_manager:
             my_manager.vaccine_patient(
                 "a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")  # One char less
-        self.assertEqual(context_manager.exception.message, DateSignature.DATE_SIGNATURE_FORMAT_NOT_VALID)
+        self.assertEqual(context_manager.exception.message,
+                         DateSignature.DATE_SIGNATURE_FORMAT_NOT_VALID)
         hash_new = file_store_vaccine.data_hash()
 
         self.assertEqual(hash_new, hash_original)
@@ -101,7 +102,8 @@ class TestVaccinePatient(TestCase):
         with self.assertRaises(VaccineManagementException) as context_manager:
             my_manager.vaccine_patient(
                 "6666666ede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
-        self.assertEqual(context_manager.exception.message, VaccinationAppointment.SIGNATURE_NOT_FOUND)
+        self.assertEqual(context_manager.exception.message,
+                         VaccinationAppointment.SIGNATURE_NOT_FOUND)
         # read the file again to compare
         hash_new = file_store_vaccine.data_hash()
         self.assertEqual(hash_new, hash_original)
@@ -117,7 +119,8 @@ class TestVaccinePatient(TestCase):
         with self.assertRaises(VaccineManagementException) as context_manager:
             my_manager.vaccine_patient(
                 "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
-        self.assertEqual(context_manager.exception.message, TestVaccinePatient.STORE_DATE_NOT_FOUND)
+        self.assertEqual(context_manager.exception.message,
+                         TestVaccinePatient.STORE_DATE_NOT_FOUND)
 
     @freeze_time("2022-03-18")
     def test_vaccine_patient_store_date_is_empty(self):
@@ -130,4 +133,5 @@ class TestVaccinePatient(TestCase):
         with self.assertRaises(VaccineManagementException) as context_manager:
             my_manager.vaccine_patient(
                 "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
-        self.assertEqual(context_manager.exception.message, VaccinationAppointment.SIGNATURE_NOT_FOUND)
+        self.assertEqual(context_manager.exception.message,
+                         VaccinationAppointment.SIGNATURE_NOT_FOUND)

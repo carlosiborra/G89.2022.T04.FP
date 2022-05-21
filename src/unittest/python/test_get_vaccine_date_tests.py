@@ -1,4 +1,5 @@
 """Tests for get_vaccine_date method"""
+
 from unittest import TestCase
 import os
 import shutil
@@ -146,11 +147,11 @@ class TestGetVaccineDate(TestCase):
         # Fixed Date in ISO format for testing purposes
         date = "2023-01-18"
 
-        # check the method
+        # Check the method
         value = my_manager.get_vaccine_date(file_test, date)
         self.assertEqual(value,
                          "1b0887bf18529ee1f12447d49841dc9229cddcc9b10bf54f37566fdd74ecf11d")
-        # check store_date
+        # Check store_date
         self.assertIsNotNone(file_store_date.find_item(value))
 
     @freeze_time("2022-03-08")
@@ -162,7 +163,7 @@ class TestGetVaccineDate(TestCase):
         file_store.delete_json_file()
         file_store_date = AppointmentsJsonStore()
         file_store_date.delete_json_file()
-        # add a patient in the store
+        # Add a patient in the store
         my_manager.request_vaccination_id("78924cb0-075a-4099-a3ee-f3b562e805b9",
                                           "minombre tienelalongitudmaxima",
                                           "Regular", "+34123456789", "6")
@@ -173,12 +174,12 @@ class TestGetVaccineDate(TestCase):
                 file_test = JSON_FILES_RF2_PATH + file_name
                 hash_original = file_store_date.data_hash()
 
-                # check the method
+                # Check the method
                 with self.assertRaises(VaccineManagementException) as c_m:
                     my_manager.get_vaccine_date(file_test, date)
                 self.assertEqual(c_m.exception.message, expected_value)
 
-                # read the file again to compare
+                # Read the file again to compare
                 hash_new = file_store_date.data_hash()
 
                 self.assertEqual(hash_new, hash_original)
@@ -254,10 +255,10 @@ class TestGetVaccineDate(TestCase):
         os.rename(JSON_FILES_PATH + "store_patient_manipulated.json", file_store)
 
         file_store_date = AppointmentsJsonStore()
-        # read the file to compare file content before and after method call
+        # Read the file to compare file content before and after method call
         hash_original = file_store_date.data_hash()
 
-        # check the method
+        # Check the method
 
         exception_message = "Exception not raised"
         try:
