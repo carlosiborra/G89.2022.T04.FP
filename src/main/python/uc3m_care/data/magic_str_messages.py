@@ -1,9 +1,9 @@
-"""Contains the class Vaccination Appointment"""
+"""Contains the class MagicStrMessage"""
 
 
 # pylint: disable=too-few-public-methods
-class CancelationMessage:
-    """Cancellation messages"""
+class MagicStrMessage:
+    """Magic string messages"""
     SIGNATURE_NOT_FOUND = "date_signature is not found"
     WRONG_VACCINATION_DATE_FORMAT = "Wrong vaccination_date format"
     DATE_EQUAL_EARLIER = "vaccination_date equal or earlier than current_date"

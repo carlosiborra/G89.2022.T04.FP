@@ -246,6 +246,7 @@ class TestCancelAppointmentEcBv(unittest.TestCase):
         # Clean the content of previous store_cancellation.json
         file_store = AppointmentsCancelStore()
         file_store.empty_json_file()
+        # Store the state of store store_cancellation.json
         hash_original = file_store_date.data_hash()
 
         # Add a patient in the store

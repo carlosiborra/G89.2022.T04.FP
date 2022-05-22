@@ -2,13 +2,14 @@
 
 from uc3m_care.data.attribute.attribute import Attribute
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
-from uc3m_care.data.cancelation_messages import CancelationMessage
+from uc3m_care.data.magic_str_messages import MagicStrMessage
 
 
+# pylint: disable=duplicate-code
 # pylint: disable=too-few-public-methods
 class Age(Attribute):
     """Class for the attribute age"""
-    AGE_NOT_VALID = CancelationMessage.AGE_NOT_VALID
+    AGE_NOT_VALID = MagicStrMessage.AGE_NOT_VALID
     _validation_error_message = AGE_NOT_VALID
 
     def _validate(self, attr_value: str) -> str:

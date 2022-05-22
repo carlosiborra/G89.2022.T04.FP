@@ -9,7 +9,7 @@ from uc3m_care import JSON_FILES_RF2_PATH
 from uc3m_care.storage.vaccination_json_store import VaccinationJsonStore
 from uc3m_care.storage.appointments_json_store import AppointmentsJsonStore
 from uc3m_care.storage.patients_json_store import PatientsJsonStore
-from uc3m_care.data.cancelation_messages import CancelationMessage
+from uc3m_care.data.magic_str_messages import MagicStrMessage
 from uc3m_care.data.attribute.attribute_date_signature import DateSignature
 
 
@@ -69,7 +69,7 @@ class TestVaccinePatient(TestCase):
         with self.assertRaises(VaccineManagementException) as context_manager:
             my_manager.vaccine_patient(
                 "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
-        self.assertEqual(context_manager.exception.message, CancelationMessage.NOT_THE_DATE)
+        self.assertEqual(context_manager.exception.message, MagicStrMessage.NOT_THE_DATE)
         # read the file again to compare
         hash_new = file_store_vaccine.data_hash()
 
@@ -103,7 +103,7 @@ class TestVaccinePatient(TestCase):
             my_manager.vaccine_patient(
                 "6666666ede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
         self.assertEqual(context_manager.exception.message,
-                         CancelationMessage.SIGNATURE_NOT_FOUND)
+                         MagicStrMessage.SIGNATURE_NOT_FOUND)
         # read the file again to compare
         hash_new = file_store_vaccine.data_hash()
         self.assertEqual(hash_new, hash_original)
@@ -134,4 +134,4 @@ class TestVaccinePatient(TestCase):
             my_manager.vaccine_patient(
                 "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
         self.assertEqual(context_manager.exception.message,
-                         CancelationMessage.SIGNATURE_NOT_FOUND)
+                         MagicStrMessage.SIGNATURE_NOT_FOUND)

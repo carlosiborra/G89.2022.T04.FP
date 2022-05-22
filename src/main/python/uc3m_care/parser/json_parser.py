@@ -2,7 +2,7 @@
 
 import json
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
-from uc3m_care.data.cancelation_messages import CancelationMessage
+from uc3m_care.data.magic_str_messages import MagicStrMessage
 
 
 class JsonParser:
@@ -10,8 +10,8 @@ class JsonParser:
     _JSON_KEYS = []
     _ERROR_MESSAGES = []
     _json_content = None
-    FILE_NOT_FOUND = CancelationMessage.FILE_NOT_FOUND
-    WRONG_JSON_FORMAT = CancelationMessage.WRONG_JSON_FORMAT
+    FILE_NOT_FOUND = MagicStrMessage.FILE_NOT_FOUND
+    WRONG_JSON_FORMAT = MagicStrMessage.WRONG_JSON_FORMAT
 
     def __init__(self, input_file):
         self._input_file = input_file

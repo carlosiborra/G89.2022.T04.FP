@@ -8,7 +8,7 @@ from uc3m_care.data.attribute.attribute_phone_number import PhoneNumber
 from uc3m_care.data.attribute.attribute_patient_system_id import PatientSystemId
 from uc3m_care.data.attribute.attribute_date_signature import DateSignature
 from uc3m_care.data.vaccination_log import VaccinationLog
-from uc3m_care.data.cancelation_messages import CancelationMessage
+from uc3m_care.data.magic_str_messages import MagicStrMessage
 from uc3m_care.data.vaccine_patient_register import VaccinePatientRegister
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
 from uc3m_care.storage.appointments_json_store import AppointmentsJsonStore
@@ -113,7 +113,7 @@ class VaccinationAppointment:
         appointment_record = appointments_store.find_item(DateSignature(date_signature).value)
 
         if appointment_record is None:
-            raise VaccineManagementException(CancelationMessage.SIGNATURE_NOT_FOUND)
+            raise VaccineManagementException(MagicStrMessage.SIGNATURE_NOT_FOUND)
         freezer = freeze_time(
             datetime.fromtimestamp(appointment_record["_VaccinationAppointment__issued_at"]))
         freezer.start()
@@ -143,7 +143,7 @@ class VaccinationAppointment:
             vaccination_date = datetime.fromisoformat(date).timestamp()
         except Exception as ex:
             raise VaccineManagementException(
-                CancelationMessage.WRONG_VACCINATION_DATE_FORMAT) from ex
+                MagicStrMessage.WRONG_VACCINATION_DATE_FORMAT) from ex
 
         # Get the actual timestamp (for operation reasons) - frozen
         current_date = datetime.now().timestamp()
@@ -152,7 +152,7 @@ class VaccinationAppointment:
         if datetime.fromtimestamp(vaccination_date).date() \
                 <= datetime.fromtimestamp(current_date).date():
             raise VaccineManagementException(
-                CancelationMessage.DATE_EQUAL_EARLIER)
+                MagicStrMessage.DATE_EQUAL_EARLIER)
 
         # Get the |days left - the timestamp| / number of days rounded
         days_left = days_left_funct(vaccination_date, current_date)
@@ -181,19 +181,19 @@ class VaccinationAppointment:
         try:
             date_signature = file["date_signature"]
         except Exception as ex:
-            raise VaccineManagementException(CancelationMessage.NO_DATE_SIGNATURE) from ex
+            raise VaccineManagementException(MagicStrMessage.NO_DATE_SIGNATURE) from ex
 
         # Check if cancelation_type exists in input file
         try:
             cancellation_type = file["cancelation_type"]
         except Exception as ex:
-            raise VaccineManagementException(CancelationMessage.NO_CANCELATION_TYPE) from ex
+            raise VaccineManagementException(MagicStrMessage.NO_CANCELATION_TYPE) from ex
 
         # Check if reason exists in input file
         try:
             reason = file["reason"]
         except Exception as ex:
-            raise VaccineManagementException(CancelationMessage.NO_REASON) from ex
+            raise VaccineManagementException(MagicStrMessage.NO_REASON) from ex
 
         # We check date_signature attribute
         SignatureDate(date_signature).value
@@ -230,12 +230,12 @@ class VaccinationAppointment:
             with open(input_file, "r", encoding="utf-8", newline="") as file:
                 file = json.load(file)
         except FileNotFoundError as ex:
-            raise VaccineManagementException(CancelationMessage.FILE_NOT_FOUND) from ex
+            raise VaccineManagementException(MagicStrMessage.FILE_NOT_FOUND) from ex
         except json.JSONDecodeError as ex:
-            raise VaccineManagementException(CancelationMessage.JEDWJF) from ex
+            raise VaccineManagementException(MagicStrMessage.JEDWJF) from ex
         # Check if input_file is composed by 3 elements
         if len(file) != 3:
-            raise VaccineManagementException(CancelationMessage.WRONG_N_ELEM)
+            raise VaccineManagementException(MagicStrMessage.WRONG_N_ELEM)
         return file
 
     @classmethod
@@ -246,7 +246,7 @@ class VaccinationAppointment:
                 appoint_file = json.load(appoint_file)
         except FileNotFoundError as ex:
             raise VaccineManagementException(
-                CancelationMessage.APPOINTMENT_FILE_DOES_NOT_EXIST) from ex
+                MagicStrMessage.APPOINTMENT_FILE_DOES_NOT_EXIST) from ex
         except json.JSONDecodeError as ex:
             raise VaccineManagementException(
                 "JSON Decode Error - Wrong JSON Format") from ex
@@ -262,13 +262,13 @@ class VaccinationAppointment:
         # If we did not encounter the date_signature - exception
         if appointment_found is False:
             raise VaccineManagementException(
-                CancelationMessage.APPOINTMENT_DOES_NOT_EXIST)
+                MagicStrMessage.APPOINTMENT_DOES_NOT_EXIST)
         # Get the actual timestamp (for operation reasons) - frozen specified by each test
         current_date = datetime.now().timestamp()
         if datetime.fromtimestamp(
                 appoint_file[appointment_index]["_VaccinationAppointment__appointment_date"]) \
                 .date() < datetime.fromtimestamp(current_date).date():
-            raise VaccineManagementException(CancelationMessage.APPOINTMENT_PASSED)
+            raise VaccineManagementException(MagicStrMessage.APPOINTMENT_PASSED)
 
     @classmethod
     def open_cancelation_file_json(cls, cancellation_file, date_signature):
@@ -278,7 +278,7 @@ class VaccinationAppointment:
                 cancel_file = json.load(cancel_file)
         except FileNotFoundError as ex:
             raise VaccineManagementException(
-                CancelationMessage.CANCELATION_FILE_DOES_NOT_EXIST) from ex
+                MagicStrMessage.CANCELATION_FILE_DOES_NOT_EXIST) from ex
         except json.JSONDecodeError as ex:
             raise VaccineManagementException(
                 "JSON Decode Error - Wrong JSON Format") from ex
@@ -286,7 +286,7 @@ class VaccinationAppointment:
         for i in range(len(cancel_file)):
             if cancel_file[i]["date_signature"] == date_signature:
                 raise VaccineManagementException(
-                    CancelationMessage.APPOINTMENT_CANCELLED)
+                    MagicStrMessage.APPOINTMENT_CANCELLED)
             continue
 
     @classmethod
@@ -297,7 +297,7 @@ class VaccinationAppointment:
                 vaccine_file = json.load(vaccine_file)
         except FileNotFoundError as ex:
             raise VaccineManagementException(
-                CancelationMessage.VACCINATION_STORE_DOES_NOT_EXIST) from ex
+                MagicStrMessage.VACCINATION_STORE_DOES_NOT_EXIST) from ex
         except json.JSONDecodeError as ex:
             raise VaccineManagementException(
                 "JSON Decode Error - Wrong JSON Format") from ex
@@ -305,7 +305,7 @@ class VaccinationAppointment:
         for i in range(len(vaccine_file)):
             if vaccine_file[i]["_VaccinationLog__date_signature"] == date_signature:
                 raise VaccineManagementException(
-                    CancelationMessage.VACCINE_ADMINISTERED)
+                    MagicStrMessage.VACCINE_ADMINISTERED)
             continue
 
     def is_valid_today(self):
@@ -314,7 +314,7 @@ class VaccinationAppointment:
         date_patient = datetime.fromtimestamp(self.appointment_date).date()
         if date_patient != today:
             raise VaccineManagementException(
-                CancelationMessage.NOT_THE_DATE)
+                MagicStrMessage.NOT_THE_DATE)
         return True
 
     def register_vaccination(self):

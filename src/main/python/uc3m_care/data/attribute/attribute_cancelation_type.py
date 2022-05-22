@@ -3,14 +3,14 @@
 import re
 from uc3m_care.data.attribute.attribute import Attribute
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
-from uc3m_care.data.cancelation_messages import CancelationMessage
+from uc3m_care.data.magic_str_messages import MagicStrMessage
 
 
 # pylint: disable=too-few-public-methods
 class CancelationType(Attribute):
     """Class for the cancelation_type"""
-    CANCELATION_TYPE_NOT_A_STRING = CancelationMessage.CANCELATION_TYPE_NOT_A_STRING
-    INVALID_CANCELATION_TYPE = CancelationMessage.INVALID_CANCELATION_TYPE
+    CANCELATION_TYPE_NOT_A_STRING = MagicStrMessage.CANCELATION_TYPE_NOT_A_STRING
+    INVALID_CANCELATION_TYPE = MagicStrMessage.INVALID_CANCELATION_TYPE
     _validation_pattern = r"Final|Temporal"
     _validation_error_message = INVALID_CANCELATION_TYPE
 

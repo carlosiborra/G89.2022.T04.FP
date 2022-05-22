@@ -3,7 +3,7 @@
 from uc3m_care.storage.json_store import JsonStore
 from uc3m_care.cfg.vaccine_manager_config import JSON_FILES_PATH
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
-from uc3m_care.data.cancelation_messages import CancelationMessage
+from uc3m_care.data.magic_str_messages import MagicStrMessage
 
 
 class AppointmentsJsonStore:
@@ -14,7 +14,7 @@ class AppointmentsJsonStore:
         """Subclass of JsonStore for managing the Appointments"""
         _FILE_PATH = JSON_FILES_PATH + "store_date.json"
         _ID_FIELD = "_VaccinationAppointment__date_signature"
-        ERROR_INVALID_APPOINTMENT_OBJECT = CancelationMessage.ERROR_INVALID_APPOINTMENT_OBJECT
+        ERROR_INVALID_APPOINTMENT_OBJECT = MagicStrMessage.ERROR_INVALID_APPOINTMENT_OBJECT
 
         def add_item(self, item):
             """Overrides the add_item method to verify the item to be stored"""

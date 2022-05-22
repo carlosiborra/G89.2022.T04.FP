@@ -4,7 +4,7 @@ import hashlib
 import json
 import os
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
-from uc3m_care.data.cancelation_messages import CancelationMessage
+from uc3m_care.data.magic_str_messages import MagicStrMessage
 
 
 class JsonStore:
@@ -12,8 +12,8 @@ class JsonStore:
     _FILE_PATH = ""
     _ID_FIELD = ""
     _data_list = []
-    WRONG_JSON_FORMAT = CancelationMessage.JEDWJF
-    WRONG_FILE_PATH = CancelationMessage.WRONG_FILE_PATH
+    WRONG_JSON_FORMAT = MagicStrMessage.JEDWJF
+    WRONG_FILE_PATH = MagicStrMessage.WRONG_FILE_PATH
 
     def __init__(self):
         self.load()

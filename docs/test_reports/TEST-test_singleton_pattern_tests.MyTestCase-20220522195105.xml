@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="test_singleton_pattern_tests.MyTestCase-20220522195105" tests="4" file="test_singleton_pattern_tests.py" time="0.005" timestamp="2022-05-22T19:51:08" failures="0" errors="0" skipped="0">
-	<testcase classname="test_singleton_pattern_tests.MyTestCase" name="test_appointments_store_singleton" time="0.001" timestamp="2022-05-22T19:51:08"/>
-	<testcase classname="test_singleton_pattern_tests.MyTestCase" name="test_patients_store_singleton" time="0.001" timestamp="2022-05-22T19:51:08"/>
-	<testcase classname="test_singleton_pattern_tests.MyTestCase" name="test_vaccination_store_singleton" time="0.002" timestamp="2022-05-22T19:51:08"/>
-	<testcase classname="test_singleton_pattern_tests.MyTestCase" name="test_vaccine_manager_singleton" time="0.001" timestamp="2022-05-22T19:51:08"/>
-</testsuite>

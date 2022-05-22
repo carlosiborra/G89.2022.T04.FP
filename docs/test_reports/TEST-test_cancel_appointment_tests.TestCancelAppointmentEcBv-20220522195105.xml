@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="test_cancel_appointment_tests.TestCancelAppointmentEcBv-20220522195105" tests="5" file="test_cancel_appointment_tests.py" time="0.637" timestamp="2022-05-22T19:51:06" failures="0" errors="0" skipped="0">
-	<testcase classname="test_cancel_appointment_tests.TestCancelAppointmentEcBv" name="test_parametrized_not_valid_ec_bv_cancellation_appointment" time="0.155" timestamp="2022-05-22T19:51:06"/>
-	<testcase classname="test_cancel_appointment_tests.TestCancelAppointmentEcBv" name="test_parametrized_valid_ec_bv_cancellation_appointment" time="0.075" timestamp="2022-05-22T19:51:06"/>
-	<testcase classname="test_cancel_appointment_tests.TestCancelAppointmentEcBv" name="test_specific_not_valid_ec_bv_encv6_cancellation_appointment" time="0.010" timestamp="2022-05-22T19:51:06"/>
-	<testcase classname="test_cancel_appointment_tests.TestCancelAppointmentEcBv" name="test_specific_not_valid_ec_bv_encv7_cancellation_appointment" time="0.382" timestamp="2022-05-22T19:51:06"/>
-	<testcase classname="test_cancel_appointment_tests.TestCancelAppointmentEcBv" name="test_specific_not_valid_ec_bv_encv8_cancellation_appointment" time="0.015" timestamp="2022-05-22T19:51:06"/>
-</testsuite>
