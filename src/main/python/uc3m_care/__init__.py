@@ -9,4 +9,5 @@ from uc3m_care.cfg.vaccine_manager_config import JSON_FILES_CANCELLATION
 from uc3m_care.vaccine_manager import VaccineManager
 from uc3m_care.storage.patients_json_store import PatientsJsonStore
 from uc3m_care.storage.appointments_json_store import AppointmentsJsonStore
+from uc3m_care.storage.appointments_cancel_store import AppointmentsCancelStore
 from uc3m_care.storage.vaccination_json_store import VaccinationJsonStore

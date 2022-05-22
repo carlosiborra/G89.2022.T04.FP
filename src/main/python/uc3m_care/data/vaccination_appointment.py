@@ -11,8 +11,8 @@ from uc3m_care.data.vaccination_log import VaccinationLog
 from uc3m_care.data.vaccine_patient_register import VaccinePatientRegister
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
 from uc3m_care.storage.appointments_json_store import AppointmentsJsonStore
+from uc3m_care.storage.appointments_cancel_store import AppointmentsCancelStore
 from uc3m_care.parser.appointment_json_parser import AppointmentJsonParser
-
 
 # pylint: disable=too-many-instance-attributes
 from uc3m_care.data.attribute.attribute_cancelation_type import CancelationType
@@ -31,12 +31,6 @@ class VaccinationAppointment:
     NO_CANCELATION_TYPE = "No cancelation_type in input_file"
     NO_DATE_SIGNATURE = "No date_signature in input_file"
     WRONG_N_ELEM = "Wrong number of elements in input_file"
-    REASON_NOT_A_STRING = "Invalid reason: not a string"
-    INVALID_REASON = "Invalid reason"
-    CANCELATION_TYPE_NOT_A_STRING = "Invalid cancelation_type: not a string"
-    INVALID_CANCELATION_TYPE = "Invalid cancelation_type"
-    INVALID_DATE_SIGNATURE = "Invalid date_signature"
-    DATE_SIGNATURE_NOT_A_STRING = "Invalid date_signature: not a string"
     APPOINTMENT_CANCELLED = "Appointment has already been canceled"
     CANCELATION_FILE_DOES_NOT_EXIST = "The cancellation_file does not exist"
     VACCINE_ADMINISTERED = "Vaccine has already been administered"
@@ -45,7 +39,6 @@ class VaccinationAppointment:
     APPOINTMENT_DOES_NOT_EXIST = "The appointment received does not exist"
     APPOINTMENT_FILE_DOES_NOT_EXIST = "The appointment_file received does not exist"
     NOT_THE_DATE = "Today is not the date"
-    ERROR_CANCELING_APPOINTMENT = "Error when cancelling the appointment"
 
     def __init__(self, patient_sys_id, patient_phone_number, days):
         self.__alg = "SHA-256"
@@ -65,7 +58,7 @@ class VaccinationAppointment:
             self.__appointment_date = self.__issued_at + (days * 24 * 60 * 60)
         self.__date_signature = self.vaccination_signature
 
-    def __signature_string(self):
+    def __signature_string(self) -> str:
         """Composes the string to be used for generating the key for the date"""
         return "{alg:" + self.__alg + ",typ:" + self.__type + ",patient_sys_id:" + \
                self.__patient_sys_id + ",issuedate:" + self.__issued_at.__str__() + \
@@ -146,7 +139,7 @@ class VaccinationAppointment:
         vaccination_date = appointment_record["_VaccinationAppointment__appointment_date"]
 
         # Get the |days left - the timestamp| / number of days rounded
-        days_left = round(abs(vaccination_date - current_date) / (24 * 60 * 60))
+        days_left = days_left_funct(vaccination_date, current_date)
 
         appointment = cls(appointment_record["_VaccinationAppointment__patient_sys_id"],
                           appointment_record["_VaccinationAppointment__phone_number"],
@@ -176,7 +169,7 @@ class VaccinationAppointment:
                 VaccinationAppointment.DATE_EQUAL_EARLIER)
 
         # Get the |days left - the timestamp| / number of days rounded
-        days_left = round(abs(vaccination_date - current_date) / (24 * 60 * 60))
+        days_left = days_left_funct(vaccination_date, current_date)
 
         # Instead of 10 days, the difference of the appointment days
         appointment_parser = AppointmentJsonParser(json_file)
@@ -189,6 +182,7 @@ class VaccinationAppointment:
     @classmethod
     def cancel_appointment_from_json_file(cls, input_file):
         """returns date_signature of the cancelled appointment"""
+        # This import must be created here in order to prevent cyclic call errors
         from uc3m_care import JSON_FILES_PATH
         appointment_file = JSON_FILES_PATH + "store_date.json"
         vaccination_file = JSON_FILES_PATH + "store_vaccine.json"
@@ -215,27 +209,14 @@ class VaccinationAppointment:
         except Exception as ex:
             raise VaccineManagementException(VaccinationAppointment.NO_REASON) from ex
 
-        # We check that date_signature type is sha256 - 64 bytes hexadecimal
-        try:
-            SignatureDate(date_signature).value
-        except TypeError as ex:
-            raise VaccineManagementException(
-                VaccinationAppointment.DATE_SIGNATURE_NOT_A_STRING) from ex
+        # We check date_signature attribute
+        SignatureDate(date_signature).value
 
-        # We check that cancellation type is either Temporal or final
-        try:
-            CancelationType(cancellation_type).value
-        except TypeError as ex:
-            raise VaccineManagementException(
-                VaccinationAppointment.CANCELATION_TYPE_NOT_A_STRING) from ex
+        # We check cancellation_type attribute
+        CancelationType(cancellation_type).value
 
-        # We check that reason string has between 2 and 100 characters
-        # We also check that it is a string
-        try:
-            Reason(reason).value
-        except TypeError as ex:
-            raise VaccineManagementException(
-                VaccinationAppointment.REASON_NOT_A_STRING) from ex
+        # We check reason attribute
+        Reason(reason).value
 
         # APPOINTMENT
         # We open the store_date.json file w/ the appointments
@@ -246,25 +227,12 @@ class VaccinationAppointment:
         cls.open_vaccination_file_json(date_signature, vaccination_file)
 
         # store_cancellation
-        # We open the store_cancellation.json file and check if date_signature already
+        # We open the store_cancellation.json file and check if date_signature already there
         cls.open_cancelation_file_json(cancellation_file, date_signature)
 
         # After checking everything, we will cancel the given appointment
-        # In order to cancel it, we will paste the cancellation input_file into store_cancellation
-        # We won't erase the store_date.json appointment, as the appointment could be reactivated
-        try:
-            with open(input_file, "r", encoding="utf-8", newline="") as in_file, \
-                    open(cancellation_file, "r+", encoding="utf-8", newline="") as cancel_file:
-                to_insert = json.load(in_file)
-                destination = json.load(cancel_file)
-                destination.append(to_insert)
-                # set position at offset
-                cancel_file.seek(0)
-                # back to json
-                json.dump(destination, cancel_file, indent=2)
-        except Exception as ex:
-            raise VaccineManagementException(
-                VaccinationAppointment.ERROR_CANCELING_APPOINTMENT) from ex
+        file_store = AppointmentsCancelStore()
+        file_store.add_item_to_cancel_store(input_file)
 
         # After all the checks and creation of the cancellation, return date_signature
         return date_signature
@@ -304,6 +272,7 @@ class VaccinationAppointment:
                 appointment_found = True
                 break
             continue
+
         # If we did not encounter the date_signature - exception
         if appointment_found is False:
             raise VaccineManagementException(
@@ -353,7 +322,6 @@ class VaccinationAppointment:
                     VaccinationAppointment.VACCINE_ADMINISTERED)
             continue
 
-
     def is_valid_today(self):
         """returns true if today is the appointment's date"""
         today = datetime.today().date()
@@ -369,3 +337,9 @@ class VaccinationAppointment:
             vaccination_log_entry = VaccinationLog(self.date_signature)
             vaccination_log_entry.save_log_entry()
         return True
+
+
+def days_left_funct(vaccination_date: float, current_date: float) -> int:
+    """static function for getting the days_left"""
+    days = round(abs(vaccination_date - current_date) / (24 * 60 * 60))
+    return days

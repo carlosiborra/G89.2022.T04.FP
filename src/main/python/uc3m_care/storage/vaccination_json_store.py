@@ -5,7 +5,7 @@ from uc3m_care.cfg.vaccine_manager_config import JSON_FILES_PATH
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
 
 
-class VaccinationJsonStore():
+class VaccinationJsonStore:
     """Implementation of the singleton pattern"""
     VACCINATION_LOG_OBJECT = "Invalid VaccinationLog object"
 
