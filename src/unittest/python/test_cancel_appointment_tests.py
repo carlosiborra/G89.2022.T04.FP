@@ -179,6 +179,8 @@ class TestCancelAppointmentEcBv(unittest.TestCase):
             with self.subTest(test=input_file):
                 value = my_manager.cancel_appointment(input_file)
                 self.assertEqual(value, date_signature)
+                # check store_cancellation.json
+                self.assertIsNotNone(file_store_date.find_item(value))
 
         # We empty store_cancellation.json to leave it clean and thus preventing future errors
         file_store = AppointmentsCancelStore()
@@ -215,15 +217,18 @@ class TestCancelAppointmentEcBv(unittest.TestCase):
             # In order to test with two appointments (works):
             # my_manager.get_vaccine_date(file_appointment, "2022-03-18")
 
+            # Store the state of store store_cancellation.json
+            hash_original = file_store_date.data_hash()
             # Check raised exceptions - TEST
             with self.subTest(test=input_file):
                 with self.assertRaises(VaccineManagementException) as c_m:
                     my_manager.cancel_appointment(input_file)
                 self.assertEqual(c_m.exception.message, raised_exception)
-
-        # We empty store_cancellation.json to leave it clean and thus preventing future errors
-        file_store = AppointmentsCancelStore()
-        file_store.empty_json_file()
+                # Read the file again to compare
+                hash_new = file_store_date.data_hash()
+                self.assertEqual(hash_new, hash_original)
+            # We do not empty store_cancellation.json as we have checked through the hashes
+            # that is the same file as the original store_cancellation.json received
 
     @freeze_time("2022-03-08")
     def test_specific_not_valid_ec_bv_encv6_cancellation_appointment(self):
@@ -241,6 +246,7 @@ class TestCancelAppointmentEcBv(unittest.TestCase):
         # Clean the content of previous store_cancellation.json
         file_store = AppointmentsCancelStore()
         file_store.empty_json_file()
+        hash_original = file_store_date.data_hash()
 
         # Add a patient in the store
         my_manager.request_vaccination_id("78924cb0-075a-4099-a3ee-f3b562e805b9",
@@ -258,10 +264,11 @@ class TestCancelAppointmentEcBv(unittest.TestCase):
                 my_manager.cancel_appointment(input_file)
             self.assertEqual(c_m.exception.message,
                              "The appointment date received has already passed")
-
-        # We clean again the store_cancellation.json to prevent future errors
-        file_store = AppointmentsCancelStore()
-        file_store.empty_json_file()
+            # Read the file again to compare
+            hash_new = file_store_date.data_hash()
+            self.assertEqual(hash_new, hash_original)
+        # We do not empty store_cancellation.json as we have checked through the hashes
+        # that is the same file as the original store_cancellation.json received
 
     @freeze_time("2022-03-08")
     def test_specific_not_valid_ec_bv_encv7_cancellation_appointment(self):
@@ -290,14 +297,18 @@ class TestCancelAppointmentEcBv(unittest.TestCase):
         my_manager.get_vaccine_date(file_appointment, "2022-03-19")
         my_manager.get_vaccine_date(file_appointment, "2022-03-18")
 
+        # Store the state of store store_cancellation.json
+        hash_original = file_store_date.data_hash()
         # Check raised exception - TEST
         with self.assertRaises(VaccineManagementException) as c_m:
             my_manager.cancel_appointment(input_file)
         self.assertEqual(c_m.exception.message, "Vaccine has already been administered")
 
-        # We clean again the store_cancellation.json to prevent future errors
-        file_store = AppointmentsCancelStore()
-        file_store.empty_json_file()
+        # Read the file again to compare
+        hash_new = file_store_date.data_hash()
+        self.assertEqual(hash_new, hash_original)
+        # We do not empty store_cancellation.json as we have checked through the hashes
+        # that is the same file as the original store_cancellation.json received
 
     @freeze_time("2022-03-08")
     def test_specific_not_valid_ec_bv_encv8_cancellation_appointment(self):
@@ -327,6 +338,8 @@ class TestCancelAppointmentEcBv(unittest.TestCase):
         # Cancel the appointment
         my_manager.cancel_appointment(input_file)
 
+        # Store the state of store store_cancellation.json
+        hash_original = file_store_date.data_hash()
         # Now we re-cancel the appointment
         # Check raised exception - TEST
         with self.assertRaises(VaccineManagementException) as c_m:
@@ -334,9 +347,11 @@ class TestCancelAppointmentEcBv(unittest.TestCase):
         self.assertEqual(c_m.exception.message,
                          "Appointment has already been canceled")
 
-        # We clean again the store_cancellation.json to prevent future errors
-        file_store = AppointmentsCancelStore()
-        file_store.empty_json_file()
+        # Read the file again to compare
+        hash_new = file_store_date.data_hash()
+        self.assertEqual(hash_new, hash_original)
+        # We do not empty store_cancellation.json as we have checked through the hashes
+        # that is the same file as the original store_cancellation.json received
 
 
 # TESTS FOR THE SYNTAX ANALYSIS
@@ -376,6 +391,8 @@ class TestCancelAppointmentSyntaxAnalysis(unittest.TestCase):
             with self.subTest(test=input_file):
                 value = my_manager.cancel_appointment(input_file)
                 self.assertEqual(value, date_signature)
+                # check store_cancellation.json
+                self.assertIsNotNone(file_store_date.find_item(value))
 
         # We empty store_cancellation.json to leave it clean and thus preventing future errors
         file_store = AppointmentsCancelStore()
@@ -406,6 +423,8 @@ class TestCancelAppointmentSyntaxAnalysis(unittest.TestCase):
                                               "minombre tienelalongitudmaxima",
                                               "Regular", "+34123456789", "6")
 
+            # Store the state of store store_cancellation.json
+            hash_original = file_store_date.data_hash()
             # Fixed Date in ISO format for testing purposes
             # Create an appointment for the given patient
             my_manager.get_vaccine_date(file_appointment, "2022-03-19")
@@ -416,9 +435,11 @@ class TestCancelAppointmentSyntaxAnalysis(unittest.TestCase):
                     my_manager.cancel_appointment(input_file)
                 self.assertEqual(c_m.exception.message, raised_exception)
 
-        # We empty store_cancellation.json to leave it clean and thus preventing future errors
-        file_store = AppointmentsCancelStore()
-        file_store.empty_json_file()
+            # Read the file again to compare
+            hash_new = file_store_date.data_hash()
+            self.assertEqual(hash_new, hash_original)
+            # We do not empty store_cancellation.json as we have checked through the hashes
+            # that is the same file as the original store_cancellation.json received
 
 
 # TESTS FOR NON TESTED EXCEPTIONS
@@ -450,15 +471,19 @@ class TestExtraNonTested(unittest.TestCase):
         # Create an appointment for the given patient
         my_manager.get_vaccine_date(file_appointment, "2022-03-19")
 
+        # Store the state of store store_cancellation.json
+        hash_original = file_store_date.data_hash()
         # Check raised exception - TEST
         with self.assertRaises(VaccineManagementException) as c_m:
             my_manager.cancel_appointment(input_file)
         self.assertEqual(c_m.exception.message,
                          "File is not found")
 
-        # We empty store_cancellation.json to leave it clean and thus preventing future errors
-        file_store = AppointmentsCancelStore()
-        file_store.empty_json_file()
+        # Read the file again to compare
+        hash_new = file_store_date.data_hash()
+        self.assertEqual(hash_new, hash_original)
+        # We do not empty store_cancellation.json as we have checked through the hashes
+        # that is the same file as the original store_cancellation.json received
 
     @freeze_time("2022-03-08")
     def test_input_file_not_json(self):
@@ -485,15 +510,19 @@ class TestExtraNonTested(unittest.TestCase):
         # Create an appointment for the given patient
         my_manager.get_vaccine_date(file_appointment, "2022-03-19")
 
+        # Store the state of store store_cancellation.json
+        hash_original = file_store_date.data_hash()
         # Check raised exception - TEST
         with self.assertRaises(VaccineManagementException) as c_m:
             my_manager.cancel_appointment(input_file)
         self.assertEqual(c_m.exception.message,
                          "File is not found")
 
-        # We empty store_cancellation.json to leave it clean and thus preventing future errors
-        file_store = AppointmentsCancelStore()
-        file_store.empty_json_file()
+        # Read the file again to compare
+        hash_new = file_store_date.data_hash()
+        self.assertEqual(hash_new, hash_original)
+        # We do not empty store_cancellation.json as we have checked through the hashes
+        # that is the same file as the original store_cancellation.json received
 
     @freeze_time("2022-03-08")
     def test_appointment_file_not_found(self):
@@ -517,6 +546,8 @@ class TestExtraNonTested(unittest.TestCase):
                                           "minombre tienelalongitudmaxima",
                                           "Regular", "+34123456789", "6")
 
+        # Store the state of store store_cancellation.json
+        hash_original = file_store_date.data_hash()
         # Check raised exception - TEST
         with self.assertRaises(VaccineManagementException) as c_m:
             my_manager.get_vaccine_date(file_appointment, "2022-03-19")
@@ -524,9 +555,11 @@ class TestExtraNonTested(unittest.TestCase):
         self.assertEqual(c_m.exception.message,
                          "File is not found")
 
-        # We empty store_cancellation.json to leave it clean and thus preventing future errors
-        file_store = AppointmentsCancelStore()
-        file_store.empty_json_file()
+        # Read the file again to compare
+        hash_new = file_store_date.data_hash()
+        self.assertEqual(hash_new, hash_original)
+        # We do not empty store_cancellation.json as we have checked through the hashes
+        # that is the same file as the original store_cancellation.json received
 
     @freeze_time("2022-03-08")
     def test_appointment_file_not_json(self):
@@ -550,6 +583,8 @@ class TestExtraNonTested(unittest.TestCase):
                                           "minombre tienelalongitudmaxima",
                                           "Regular", "+34123456789", "6")
 
+        # Store the state of store store_cancellation.json
+        hash_original = file_store_date.data_hash()
         # Check raised exception - TEST
         with self.assertRaises(VaccineManagementException) as c_m:
             my_manager.get_vaccine_date(file_appointment, "2022-03-19")
@@ -557,9 +592,11 @@ class TestExtraNonTested(unittest.TestCase):
         self.assertEqual(c_m.exception.message,
                          "File is not found")
 
-        # We empty store_cancellation.json to leave it clean and thus preventing future errors
-        file_store = AppointmentsCancelStore()
-        file_store.empty_json_file()
+        # Read the file again to compare
+        hash_new = file_store_date.data_hash()
+        self.assertEqual(hash_new, hash_original)
+        # We do not empty store_cancellation.json as we have checked through the hashes
+        # that is the same file as the original store_cancellation.json received
 
 
 if __name__ == '__main__':

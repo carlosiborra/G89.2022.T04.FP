@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="test_cancel_appointment_tests.TestExtraNonTested-20220522115713" tests="4" file="test_cancel_appointment_tests.py" time="0.056" timestamp="2022-05-22T11:57:16" failures="0" errors="0" skipped="0">
+	<testcase classname="test_cancel_appointment_tests.TestExtraNonTested" name="test_appointment_file_not_found" time="0.011" timestamp="2022-05-22T11:57:15"/>
+	<testcase classname="test_cancel_appointment_tests.TestExtraNonTested" name="test_appointment_file_not_json" time="0.011" timestamp="2022-05-22T11:57:15"/>
+	<testcase classname="test_cancel_appointment_tests.TestExtraNonTested" name="test_input_file_not_found" time="0.017" timestamp="2022-05-22T11:57:16"/>
+	<testcase classname="test_cancel_appointment_tests.TestExtraNonTested" name="test_input_file_not_json" time="0.016" timestamp="2022-05-22T11:57:16"/>
+</testsuite>
