@@ -14,11 +14,13 @@ from uc3m_care.exception.vaccine_management_exception import VaccineManagementEx
 from uc3m_care.storage.appointments_json_store import AppointmentsJsonStore
 from uc3m_care.storage.appointments_cancel_store import AppointmentsCancelStore
 from uc3m_care.parser.appointment_json_parser import AppointmentJsonParser
-
-# pylint: disable=too-many-instance-attributes
 from uc3m_care.data.attribute.attribute_cancelation_type import CancelationType
 from uc3m_care.data.attribute.attribute_signature_date import SignatureDate
 from uc3m_care.data.attribute.attribute_reason import Reason
+# pylint: disable=expression-not-assigned
+# pylint: disable=too-many-instance-attributes
+# pylint: disable=import-outside-toplevel
+# pylint: disable=consider-using-enumerate
 
 
 class VaccinationAppointment:

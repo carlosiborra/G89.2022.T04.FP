@@ -3,14 +3,15 @@
 import re
 from uc3m_care.data.attribute.attribute import Attribute
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
+from uc3m_care.data.cancelation_messages import CancelationMessage
 
 
 # pylint: disable=too-few-public-methods
 class Reason(Attribute):
     """Class for the attribute reason"""
-    NO_REASON = "No reason in input_file"
-    REASON_NOT_A_STRING = "Invalid reason: not a string"
-    INVALID_REASON = "Invalid reason"
+    NO_REASON = CancelationMessage.NO_REASON
+    REASON_NOT_A_STRING = CancelationMessage.REASON_NOT_A_STRING
+    INVALID_REASON = CancelationMessage.INVALID_REASON
     _validation_pattern = r"^[\d\w\s]{2,100}$"
     _validation_error_message = INVALID_REASON
 

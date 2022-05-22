@@ -3,13 +3,14 @@
 import uuid
 from uc3m_care.data.attribute.attribute import Attribute
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
+from uc3m_care.data.cancelation_messages import CancelationMessage
 
 
 # pylint: disable=too-few-public-methods
 class PatientId(Attribute):
     """Class for the attribute PatientId"""
-    UUID_INVALID = "UUID invalid"
-    ID_NOT_UUID = "Id received is not a UUID"
+    UUID_INVALID = CancelationMessage.UUID_INVALID
+    ID_NOT_UUID = CancelationMessage.ID_NOT_UUID
     _validation_pattern = r"^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}" \
                           r"-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$"
     _validation_error_message = UUID_INVALID

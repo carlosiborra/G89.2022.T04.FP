@@ -3,13 +3,14 @@
 import re
 from uc3m_care.data.attribute.attribute import Attribute
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
+from uc3m_care.data.cancelation_messages import CancelationMessage
 
 
 # pylint: disable=too-few-public-methods
 class SignatureDate(Attribute):
     """Class for the date_signature"""
-    INVALID_DATE_SIGNATURE = "Invalid date_signature"
-    DATE_SIGNATURE_NOT_A_STRING = "Invalid date_signature: not a string"
+    INVALID_DATE_SIGNATURE = CancelationMessage.INVALID_DATE_SIGNATURE
+    DATE_SIGNATURE_NOT_A_STRING = CancelationMessage.DATE_SIGNATURE_NOT_A_STRING
     _validation_pattern = r"^[a-fA-F0-9]{64}$"
     _validation_error_message = "Invalid date_signature"
 

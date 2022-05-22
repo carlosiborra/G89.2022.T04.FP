@@ -1,4 +1,5 @@
 """Class representing an entry of the vaccine administration log"""
+
 from datetime import datetime
 from uc3m_care.storage.vaccination_json_store import VaccinationJsonStore
 

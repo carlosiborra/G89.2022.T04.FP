@@ -9,7 +9,6 @@ from uc3m_care import JSON_FILES_RF2_PATH
 from uc3m_care.storage.vaccination_json_store import VaccinationJsonStore
 from uc3m_care.storage.appointments_json_store import AppointmentsJsonStore
 from uc3m_care.storage.patients_json_store import PatientsJsonStore
-from uc3m_care.data.vaccination_appointment import VaccinationAppointment
 from uc3m_care.data.cancelation_messages import CancelationMessage
 from uc3m_care.data.attribute.attribute_date_signature import DateSignature
 

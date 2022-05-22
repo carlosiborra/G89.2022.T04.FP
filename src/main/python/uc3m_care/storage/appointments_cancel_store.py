@@ -30,7 +30,8 @@ class AppointmentsCancelStore:
 
         # In order to cancel it, we will paste the cancellation input_file into store_cancellation
         # We won't erase the store_date.json appointment, as the appointment could be reactivated
-        def add_item_to_cancel_store(self, input_file):
+        @staticmethod
+        def add_item_to_cancel_store(input_file):
             """new store static function which cancels an input file"""
             cancellation_file = JSON_FILES_PATH + "store_cancellation.json"
             try:
