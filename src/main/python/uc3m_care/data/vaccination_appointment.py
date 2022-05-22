@@ -8,6 +8,7 @@ from uc3m_care.data.attribute.attribute_phone_number import PhoneNumber
 from uc3m_care.data.attribute.attribute_patient_system_id import PatientSystemId
 from uc3m_care.data.attribute.attribute_date_signature import DateSignature
 from uc3m_care.data.vaccination_log import VaccinationLog
+from uc3m_care.data.cancelation_messages import CancelationMessage
 from uc3m_care.data.vaccine_patient_register import VaccinePatientRegister
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
 from uc3m_care.storage.appointments_json_store import AppointmentsJsonStore
@@ -22,7 +23,6 @@ from uc3m_care.data.attribute.attribute_reason import Reason
 
 class VaccinationAppointment:
     """Class representing an appointment  for the vaccination of a patient"""
-    SIGNATURE_NOT_FOUND = "date_signature is not found"
     WRONG_VACCINATION_DATE_FORMAT = "Wrong vaccination_date format"
     DATE_EQUAL_EARLIER = "vaccination_date equal or earlier than current_date"
     JEDWJF = "JSON Decode Error - Wrong JSON Format"
@@ -127,7 +127,7 @@ class VaccinationAppointment:
         appointment_record = appointments_store.find_item(DateSignature(date_signature).value)
 
         if appointment_record is None:
-            raise VaccineManagementException(VaccinationAppointment.SIGNATURE_NOT_FOUND)
+            raise VaccineManagementException(CancelationMessage.SIGNATURE_NOT_FOUND)
         freezer = freeze_time(
             datetime.fromtimestamp(appointment_record["_VaccinationAppointment__issued_at"]))
         freezer.start()
