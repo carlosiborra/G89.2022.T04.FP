@@ -1,4 +1,4 @@
-"""Class for the attribute PhoneNumber"""
+"""Class for the attribute RegistrationType"""
 
 from uc3m_care.data.attribute.attribute import Attribute
 from uc3m_care.data.magic_str_messages import MagicStrMessage
