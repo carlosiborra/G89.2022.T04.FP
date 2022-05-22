@@ -3,12 +3,13 @@
 from uc3m_care.storage.json_store import JsonStore
 from uc3m_care.cfg.vaccine_manager_config import JSON_FILES_PATH
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
+from uc3m_care.data.cancelation_messages import CancelationMessage
 
 
 class PatientsJsonStore:
     """Implements the singleton pattern"""
-    PATIENT_ID_REGISTERED = "patien_id is registered in store_patient"
-    INVALID_PATIENT_OBJECT = "Invalid patient object"
+    PATIENT_ID_REGISTERED = CancelationMessage.PATIENT_ID_REGISTERED
+    INVALID_PATIENT_OBJECT = CancelationMessage.PATIENT_ID_REGISTERED
 
     # pylint: disable=invalid-name
     class __PatientsJsonStore(JsonStore):

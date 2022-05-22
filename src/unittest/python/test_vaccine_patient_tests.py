@@ -70,7 +70,7 @@ class TestVaccinePatient(TestCase):
         with self.assertRaises(VaccineManagementException) as context_manager:
             my_manager.vaccine_patient(
                 "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
-        self.assertEqual(context_manager.exception.message, VaccinationAppointment.NOT_THE_DATE)
+        self.assertEqual(context_manager.exception.message, CancelationMessage.NOT_THE_DATE)
         # read the file again to compare
         hash_new = file_store_vaccine.data_hash()
 

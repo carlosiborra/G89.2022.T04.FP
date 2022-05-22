@@ -6,14 +6,16 @@ import os
 
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
 
+from uc3m_care.data.cancelation_messages import CancelationMessage
+
 
 class JsonStore:
     """Superclass for managing storage in JSON files"""
     _FILE_PATH = ""
     _ID_FIELD = ""
     _data_list = []
-    WRONG_JSON_FORMAT = "JSON Decode Error - Wrong JSON Format"
-    WRONG_FILE_PATH = "Wrong file or file path"
+    WRONG_JSON_FORMAT = CancelationMessage.JEDWJF
+    WRONG_FILE_PATH = CancelationMessage.WRONG_FILE_PATH
 
     def __init__(self):
         self.load()
