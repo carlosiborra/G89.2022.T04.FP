@@ -3,7 +3,6 @@
 from datetime import datetime
 import hashlib
 import json
-import re
 from freezegun import freeze_time
 from uc3m_care.data.attribute.attribute_phone_number import PhoneNumber
 from uc3m_care.data.attribute.attribute_patient_system_id import PatientSystemId
@@ -196,17 +195,7 @@ class VaccinationAppointment:
         cancellation_file = JSON_FILES_PATH + "store_cancellation.json"
 
         # We open the input_file - get date signature
-        try:
-            with open(input_file, "r", encoding="utf-8", newline="") as file:
-                file = json.load(file)
-        except FileNotFoundError as ex:
-            raise VaccineManagementException(VaccinationAppointment.FILE_NOT_FOUND) from ex
-        except json.JSONDecodeError as ex:
-            raise VaccineManagementException(VaccinationAppointment.JEDWJF) from ex
-
-        # Check if input_file is composed by 3 elements
-        if len(file) != 3:
-            raise VaccineManagementException(VaccinationAppointment.WRONG_N_ELEM)
+        file = cls.open_input_file_json(input_file)
 
         # Check if date_signature exists in input file and save its value
         try:
@@ -250,75 +239,15 @@ class VaccinationAppointment:
 
         # APPOINTMENT
         # We open the store_date.json file w/ the appointments
-        try:
-            with open(appointment_file, "r", encoding="utf-8", newline="") as appoint_file:
-                appoint_file = json.load(appoint_file)
-        except FileNotFoundError as ex:
-            raise VaccineManagementException(
-                VaccinationAppointment.APPOINTMENT_FILE_DOES_NOT_EXIST) from ex
-        except json.JSONDecodeError as ex:
-            raise VaccineManagementException(
-                VaccinationAppointment.JEDWJF) from ex
-
-        # We search for an appointment with the given date_signature
-        appointment_found = False
-        for i in range(len(appoint_file)):
-            if appoint_file[i]["_VaccinationAppointment__date_signature"] == date_signature:
-                appointment_index = i
-                appointment_found = True
-                break
-            continue
-
-        # If we did not encounter the date_signature - exception
-        if appointment_found is False:
-            raise VaccineManagementException(
-                VaccinationAppointment.APPOINTMENT_DOES_NOT_EXIST)
-
-        # Get the actual timestamp (for operation reasons) - frozen specified by each test
-        current_date = datetime.now().timestamp()
-
-        if datetime.fromtimestamp(
-                appoint_file[appointment_index]["_VaccinationAppointment__appointment_date"]) \
-                .date() < datetime.fromtimestamp(current_date).date():
-            raise VaccineManagementException(VaccinationAppointment.APPOINTMENT_PASSED)
+        cls.open_appointment_file_json(appointment_file, date_signature)
 
         # Vaccination log
         # We open the store_vaccine.json file and check if date_signature already vaccinated
-        try:
-            with open(vaccination_file, "r", encoding="utf-8", newline="") as vaccine_file:
-                vaccine_file = json.load(vaccine_file)
-        except FileNotFoundError as ex:
-            raise VaccineManagementException(
-                VaccinationAppointment.VACCINATION_STORE_DOES_NOT_EXIST) from ex
-        except json.JSONDecodeError as ex:
-            raise VaccineManagementException(
-                VaccinationAppointment.JEDWJF) from ex
-
-        # We search for a vaccination with the given date_signature
-        for i in range(len(vaccine_file)):
-            if vaccine_file[i]["_VaccinationLog__date_signature"] == date_signature:
-                raise VaccineManagementException(
-                    VaccinationAppointment.VACCINE_ADMINISTERED)
-            continue
+        cls.open_vaccination_file_json(date_signature, vaccination_file)
 
         # store_cancellation
         # We open the store_cancellation.json file and check if date_signature already
-        try:
-            with open(cancellation_file, "r", encoding="utf-8", newline="") as cancel_file:
-                cancel_file = json.load(cancel_file)
-        except FileNotFoundError as ex:
-            raise VaccineManagementException(
-                VaccinationAppointment.CANCELATION_FILE_DOES_NOT_EXIST) from ex
-        except json.JSONDecodeError as ex:
-            raise VaccineManagementException(
-                VaccinationAppointment.JEDWJF) from ex
-
-        # We search for a cancellation with the given date_signature
-        for i in range(len(cancel_file)):
-            if cancel_file[i]["date_signature"] == date_signature:
-                raise VaccineManagementException(
-                    VaccinationAppointment.APPOINTMENT_CANCELLED)
-            continue
+        cls.open_cancelation_file_json(cancellation_file, date_signature)
 
         # After checking everything, we will cancel the given appointment
         # In order to cancel it, we will paste the cancellation input_file into store_cancellation
@@ -339,6 +268,91 @@ class VaccinationAppointment:
 
         # After all the checks and creation of the cancellation, return date_signature
         return date_signature
+
+    @classmethod
+    def open_input_file_json(cls, input_file):
+        """opens the input file"""
+        try:
+            with open(input_file, "r", encoding="utf-8", newline="") as file:
+                file = json.load(file)
+        except FileNotFoundError as ex:
+            raise VaccineManagementException(VaccinationAppointment.FILE_NOT_FOUND) from ex
+        except json.JSONDecodeError as ex:
+            raise VaccineManagementException(VaccinationAppointment.JEDWJF) from ex
+        # Check if input_file is composed by 3 elements
+        if len(file) != 3:
+            raise VaccineManagementException(VaccinationAppointment.WRONG_N_ELEM)
+        return file
+
+    @classmethod
+    def open_appointment_file_json(cls, appointment_file, date_signature):
+        """opens the appointment file"""
+        try:
+            with open(appointment_file, "r", encoding="utf-8", newline="") as appoint_file:
+                appoint_file = json.load(appoint_file)
+        except FileNotFoundError as ex:
+            raise VaccineManagementException(
+                VaccinationAppointment.APPOINTMENT_FILE_DOES_NOT_EXIST) from ex
+        except json.JSONDecodeError as ex:
+            raise VaccineManagementException(
+                "JSON Decode Error - Wrong JSON Format") from ex
+        # We search for an appointment with the given date_signature
+        appointment_found = False
+        for i in range(len(appoint_file)):
+            if appoint_file[i]["_VaccinationAppointment__date_signature"] == date_signature:
+                appointment_index = i
+                appointment_found = True
+                break
+            continue
+        # If we did not encounter the date_signature - exception
+        if appointment_found is False:
+            raise VaccineManagementException(
+                VaccinationAppointment.APPOINTMENT_DOES_NOT_EXIST)
+        # Get the actual timestamp (for operation reasons) - frozen specified by each test
+        current_date = datetime.now().timestamp()
+        if datetime.fromtimestamp(
+                appoint_file[appointment_index]["_VaccinationAppointment__appointment_date"]) \
+                .date() < datetime.fromtimestamp(current_date).date():
+            raise VaccineManagementException(VaccinationAppointment.APPOINTMENT_PASSED)
+
+    @classmethod
+    def open_cancelation_file_json(cls, cancellation_file, date_signature):
+        """opens the cancelation file"""
+        try:
+            with open(cancellation_file, "r", encoding="utf-8", newline="") as cancel_file:
+                cancel_file = json.load(cancel_file)
+        except FileNotFoundError as ex:
+            raise VaccineManagementException(
+                VaccinationAppointment.CANCELATION_FILE_DOES_NOT_EXIST) from ex
+        except json.JSONDecodeError as ex:
+            raise VaccineManagementException(
+                "JSON Decode Error - Wrong JSON Format") from ex
+        # We search for a cancellation with the given date_signature
+        for i in range(len(cancel_file)):
+            if cancel_file[i]["date_signature"] == date_signature:
+                raise VaccineManagementException(
+                    VaccinationAppointment.APPOINTMENT_CANCELLED)
+            continue
+
+    @classmethod
+    def open_vaccination_file_json(cls, date_signature, vaccination_file):
+        """opens the vaccination file"""
+        try:
+            with open(vaccination_file, "r", encoding="utf-8", newline="") as vaccine_file:
+                vaccine_file = json.load(vaccine_file)
+        except FileNotFoundError as ex:
+            raise VaccineManagementException(
+                VaccinationAppointment.VACCINATION_STORE_DOES_NOT_EXIST) from ex
+        except json.JSONDecodeError as ex:
+            raise VaccineManagementException(
+                "JSON Decode Error - Wrong JSON Format") from ex
+        # We search for a vaccination with the given date_signature
+        for i in range(len(vaccine_file)):
+            if vaccine_file[i]["_VaccinationLog__date_signature"] == date_signature:
+                raise VaccineManagementException(
+                    VaccinationAppointment.VACCINE_ADMINISTERED)
+            continue
+
 
     def is_valid_today(self):
         """returns true if today is the appointment's date"""

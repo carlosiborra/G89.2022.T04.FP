@@ -7,14 +7,14 @@ from uc3m_care.exception.vaccine_management_exception import VaccineManagementEx
 
 class PatientsJsonStore:
     """Implements the singleton pattern"""
+    PATIENT_ID_REGISTERED = "patien_id is registered in store_patient"
+    INVALID_PATIENT_OBJECT = "Invalid patient object"
 
     # pylint: disable=invalid-name
     class __PatientsJsonStore(JsonStore):
         """Subclass of JsonStore for managing the VaccinationLog"""
         _FILE_PATH = JSON_FILES_PATH + "store_patient.json"
         _ID_FIELD = "_VaccinePatientRegister__patient_sys_id"
-        PATIENT_ID_REGISTERED = "patien_id is registered in store_patient"
-        INVALID_PATIENT_OBJECT = "Invalid patient object"
 
         def add_item(self, item):
             """Overrides the add_item to verify the item to be stored"""
@@ -22,7 +22,7 @@ class PatientsJsonStore:
             from uc3m_care.data.vaccine_patient_register import VaccinePatientRegister
             if not isinstance(item, VaccinePatientRegister):
                 raise VaccineManagementException(
-                    PatientsJsonStore.__PatientsJsonStore.INVALID_PATIENT_OBJECT)
+                    PatientsJsonStore.INVALID_PATIENT_OBJECT)
             patient_found = False
             patient_records = self.find_items_list \
                 (item.patient_id, "_VaccinePatientRegister__patient_id")
@@ -33,7 +33,7 @@ class PatientsJsonStore:
                         (patient_recorded["_VaccinePatientRegister__full_name"]
                          == item.full_name):
                     raise VaccineManagementException(
-                        PatientsJsonStore.__PatientsJsonStore.PATIENT_ID_REGISTERED)
+                        PatientsJsonStore.PATIENT_ID_REGISTERED)
 
             if not patient_found:
                 super().add_item(item)

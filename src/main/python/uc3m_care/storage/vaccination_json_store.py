@@ -7,13 +7,13 @@ from uc3m_care.exception.vaccine_management_exception import VaccineManagementEx
 
 class VaccinationJsonStore():
     """Implementation of the singleton pattern"""
+    VACCINATION_LOG_OBJECT = "Invalid VaccinationLog object"
 
     # pylint: disable=invalid-name
     class __VaccinationJsonStore(JsonStore):
         """Subclass of JsonStore for managing the VaccinationLog"""
         _FILE_PATH = JSON_FILES_PATH + "store_vaccine.json"
         _ID_FIELD = "_VaccinationLog__date_signature"
-        VACCINATION_LOG_OBJECT = "Invalid VaccinationLog object"
 
         def add_item(self, item):
             """Overrides the add_item to verify the item to be stored"""
@@ -21,7 +21,7 @@ class VaccinationJsonStore():
             from uc3m_care.data.vaccination_log import VaccinationLog
             if not isinstance(item, VaccinationLog):
                 raise VaccineManagementException(
-                    VaccinationJsonStore.__VaccinationJsonStore.VACCINATION_LOG_OBJECT)
+                    VaccinationJsonStore.VACCINATION_LOG_OBJECT)
             super().add_item(item)
 
     instance = None
